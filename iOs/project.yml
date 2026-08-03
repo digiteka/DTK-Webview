@@ -1,0 +1,43 @@
+name: DTKTester
+options:
+  bundleIdPrefix: com.digiteka
+  deploymentTarget:
+    iOS: "15.0"
+  xcodeVersion: "15.0"
+
+targets:
+  DTKTester:
+    type: application
+    platform: iOS
+    deploymentTarget: "15.0"
+    sources:
+      - path: Sources
+        excludes:
+          - "**/.DS_Store"
+    # Déclaré ici pour que `xcodegen generate` régénère le scheme partagé
+    # au lieu de le supprimer.
+    scheme:
+      environmentVariables: []
+    settings:
+      base:
+        PRODUCT_BUNDLE_IDENTIFIER: com.digiteka.dtktester
+        SWIFT_VERSION: 5.0
+        DEVELOPMENT_TEAM: ""
+        IPHONEOS_DEPLOYMENT_TARGET: "15.0"
+        MARKETING_VERSION: "1.0.0"
+        CURRENT_PROJECT_VERSION: "1"
+    info:
+      path: Sources/Info.plist
+      properties:
+        CFBundleDisplayName: DTK Tester
+        NSAppTransportSecurity:
+          NSAllowsArbitraryLoads: true
+          NSAllowsArbitraryLoadsInWebContent: true
+        UIBackgroundModes: []
+        # Requis dès iOS 14 : sans cette clé l'app tourne en mode compatibilité
+        # (letterboxée) sur iOS 15 au lieu de la résolution native.
+        UILaunchScreen: {}
+        UISupportedInterfaceOrientations:
+          - UIInterfaceOrientationPortrait
+          - UIInterfaceOrientationLandscapeLeft
+          - UIInterfaceOrientationLandscapeRight

@@ -1,0 +1,12 @@
+<resources>
+	<string name="app_name">VideoFeedV2</string>
+	<string name="videoId_hint">VideoId</string>
+	<string name="mdtk_hint">MDTK</string>
+	<string name="adunitpath_hint">AdUnit Path (/{networkCode}/{adBlockPath})</string>
+	<string name="zoneId_hint">Zone ID</string>
+	<string name="btn_activity">VideoFeed activity</string>
+	<string name="btn_fragment">VideoFeed Fragment</string>
+	<string name="btn_carousel">Carousel (xml)</string>
+	<string name="btn_carousel_compose">Carousel (Compose)</string>
+	<string name="btn_video_player">Video Player</string>
+</resources>

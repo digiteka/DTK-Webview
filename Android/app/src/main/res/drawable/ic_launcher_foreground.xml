@@ -1,0 +1,54 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!--
+    Logo mark Digiteka — arrow seule, centrée dans la safe-zone adaptive icon (66dp / 108dp).
+
+    Transformation appliquée sur le path original (bounding box (0,5)→(83,113.6), taille 83×108.6) :
+        pivot    = (0, 5)
+        scale    = 0.663  → taille finale 55×72 dp (tient dans la safe-zone 66dp)
+        translate= (26.5, 13)  → centre à (54, 54) dans le viewport 108×108
+
+    Gradient recalculé dans le repère 108×108 :
+        (x_new, y_new) = (x * 0.663 + 26.5,  y * 0.663 + 14.685)
+        start (-21.73, 73.68) → (12.09, 63.53)
+        end   ( 65.66, 23.22) → (70.03, 30.07)
+-->
+<vector xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:aapt="http://schemas.android.com/aapt"
+    android:width="108dp"
+    android:height="108dp"
+    android:viewportWidth="108"
+    android:viewportHeight="108">
+
+    <group
+        android:pivotX="0"
+        android:pivotY="5"
+        android:scaleX="0.663"
+        android:scaleY="0.663"
+        android:translateX="26.5"
+        android:translateY="13">
+
+        <path android:pathData="m17,33.2 41.6,26.1 L17,85.4 V33.2 M3.2,5 C1.4,5 0,6.4 0,8.2 v102.1 c-0.1,1.8 1.3,3.2 3.1,3.3 h0.1 c0.6,0 1.2,-0.2 1.7,-0.5 l78.1,-49 c2.7,-1.7 3.4,-5.2 1.7,-7.9 -0.4,-0.7 -1,-1.3 -1.7,-1.7 L4.9,5.5 C4.4,5.2 3.8,5 3.2,5 z">
+            <aapt:attr name="android:fillColor">
+                <gradient
+                    android:startX="12.09"
+                    android:startY="63.53"
+                    android:endX="70.03"
+                    android:endY="30.07"
+                    android:type="linear">
+                    <item android:offset="0"    android:color="#fff80f44"/>
+                    <item android:offset="0.08" android:color="#fff50f46"/>
+                    <item android:offset="0.14" android:color="#ffea114a"/>
+                    <item android:offset="0.21" android:color="#ffd81352"/>
+                    <item android:offset="0.27" android:color="#ffbf165d"/>
+                    <item android:offset="0.33" android:color="#ff9f196c"/>
+                    <item android:offset="0.39" android:color="#ff771e7e"/>
+                    <item android:offset="0.44" android:color="#ff482492"/>
+                    <item android:offset="0.50" android:color="#ff132aaa"/>
+                    <item android:offset="1.0"  android:color="#ff0fd3bd"/>
+                </gradient>
+            </aapt:attr>
+        </path>
+
+    </group>
+
+</vector>
