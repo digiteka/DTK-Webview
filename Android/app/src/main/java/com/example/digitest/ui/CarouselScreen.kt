@@ -20,9 +20,11 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.viewinterop.AndroidView
-import com.digiteka.videofeed.ui.carousel.VideoFeedCarouselView
+import com.digiteka.videofeed.ui.carousel.VideoFeedCarousel
+import com.example.digitest.DEFAULT_VF_CAROUSEL_HEIGHT_VH
 import com.example.digitest.DEFAULT_VF_MDTK
 import com.example.digitest.VideoFeedPreferences
+import com.example.digitest.consent.ConsentManager
 import com.example.digitest.utils.destroyWebViewsRecursively
 import com.example.digitest.utils.enableThirdPartyCookiesRecursively
 
@@ -31,16 +33,24 @@ fun CarouselScreen() {
     val context = LocalContext.current
     val config = remember { VideoFeedPreferences.getConfig(context) }
     val carouselView = remember {
-        VideoFeedCarouselView(context).also {
+        VideoFeedCarousel(context).also {
             it.layoutParams = ViewGroup.LayoutParams(
                 ViewGroup.LayoutParams.MATCH_PARENT,
                 ViewGroup.LayoutParams.MATCH_PARENT
             )
-            it.load(
-                config.mdtk ?: DEFAULT_VF_MDTK,
-                config.adUnitPath,
-                config.zoneId
+            // Le SDK de prod n'expose ni placeholder ni API publique pour MDTK_carrousel_height
+            // (en dur à "95vh" dans son propre template) : on reconstruit le HTML nous-mêmes,
+            // à partir du même asset "video_feed_carousel.html" livré par le SDK, pour pouvoir
+            // le surcharger. Le WebViewClient du SDK (interception des clics vignette) reste
+            // attaché puisqu'il est posé dans le constructeur de VideoFeedCarousel.
+            val html = buildCarouselHtml(
+                context = context,
+                mdtk = config.mdtk ?: DEFAULT_VF_MDTK,
+                adUnitPath = config.adUnitPath,
+                zoneId = config.zoneId,
+                heightVh = config.carouselHeightVh ?: DEFAULT_VF_CAROUSEL_HEIGHT_VH
             )
+            it.loadDataWithBaseURL("https://videofeed.digiteka.com", html, "text/html", "UTF-8", "")
         }
     }
 
@@ -74,7 +84,7 @@ fun CarouselScreen() {
                 factory = { carouselView },
                 modifier = Modifier
                     .fillMaxWidth()
-                    .height(340.dp)  // 280dp carousel + ~48dp nav buttons + marge
+                    .height(280.dp)
             )
 
             Text(
@@ -90,6 +100,22 @@ fun CarouselScreen() {
             )
         }
     }
+}
+
+private fun buildCarouselHtml(
+    context: android.content.Context,
+    mdtk: String,
+    adUnitPath: String?,
+    zoneId: String?,
+    heightVh: String
+): String {
+    val template = context.assets.open("video_feed_carousel.html").bufferedReader().use { it.readText() }
+    return template
+        .replace("\${mdtk}", mdtk)
+        .replace("\${consentString}", ConsentManager.getTcString(context) ?: "")
+        .replace("\${adUnitPath}", adUnitPath ?: "")
+        .replace("\${zoneId}", zoneId ?: "")
+        .replace("window.MDTK_carrousel_height = \"95vh\";", "window.MDTK_carrousel_height = \"${heightVh}vh\";")
 }
 
 private const val loremIpsum = """Le composant VideoFeed Carousel permet d'intégrer facilement un carousel de vidéos dans n'importe quelle page de votre application.

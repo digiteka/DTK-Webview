@@ -44,5 +44,3 @@ dependencyResolutionManagement {
 
 rootProject.name = "DIGITEST"
 include(":app")
-include(":videofeed-lib")
-project(":videofeed-lib").projectDir = file("carrousel-modified/lib")

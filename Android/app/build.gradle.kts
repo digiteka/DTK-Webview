@@ -52,8 +52,8 @@ dependencies {
     implementation(libs.google.ump)
     implementation(libs.androidx.preference)
 
-    // Digiteka VideoFeed SDK (module local avec flèches de navigation)
-    implementation(project(":videofeed-lib"))
+    // Digiteka VideoFeed
+    implementation("com.github.digiteka:videofeed-android:2.1.1")
 
     // Digiteka InStream SDK
     implementation("com.github.digiteka:SDK-instream-Android:1.1.0-0")

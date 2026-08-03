@@ -1,0 +1,10 @@
+{
+  "permissions": {
+    "allow": [
+      "Bash(mkdir -p /tmp/vf_extract)",
+      "Read(//tmp/**)",
+      "Bash(rm -rf *)",
+      "Bash(unzip -o -q \"/c/Users/pingo/.gradle/caches/modules-2/files-2.1/com.github.digiteka/videofeed-android/2.1.1/e99e2931c9bbed52b3b32507be5f4f28b0883e3a/videofeed-android-2.1.1.aar\")"
+    ]
+  }
+}

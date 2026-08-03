@@ -34,6 +34,7 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
+import com.example.digitest.DEFAULT_VF_CAROUSEL_HEIGHT_VH
 import com.example.digitest.DEFAULT_VF_MDTK
 import com.example.digitest.VideoFeedConfig
 import com.example.digitest.VideoFeedPreferences
@@ -53,6 +54,7 @@ fun VideoFeedConfigScreen() {
     var zoneIdInput by rememberSaveable { mutableStateOf(initialConfig.zoneId ?: "") }
     var adUnitPathInput by rememberSaveable { mutableStateOf(initialConfig.adUnitPath ?: "") }
     var videoIdInput by rememberSaveable { mutableStateOf(initialConfig.videoId ?: "") }
+    var carouselHeightInput by rememberSaveable { mutableStateOf(initialConfig.carouselHeightVh ?: "") }
     var activeConfig by remember { mutableStateOf(initialConfig) }
 
     Box(
@@ -115,13 +117,26 @@ fun VideoFeedConfigScreen() {
                 colors = configFieldColors()
             )
 
+            OutlinedTextField(
+                value = carouselHeightInput,
+                onValueChange = { input ->
+                    carouselHeightInput = input.filter { it.isDigit() }
+                },
+                label = { Text("Hauteur carrousel (vh)") },
+                placeholder = { Text("$DEFAULT_VF_CAROUSEL_HEIGHT_VH (carousel uniquement)") },
+                singleLine = true,
+                modifier = Modifier.fillMaxWidth(),
+                colors = configFieldColors()
+            )
+
             Button(
                 onClick = {
                     val config = VideoFeedConfig(
                         mdtk = mdtkInput.trim().ifEmpty { null },
                         zoneId = zoneIdInput.trim().ifEmpty { null },
                         adUnitPath = adUnitPathInput.trim().ifEmpty { null },
-                        videoId = videoIdInput.trim().ifEmpty { null }
+                        videoId = videoIdInput.trim().ifEmpty { null },
+                        carouselHeightVh = carouselHeightInput.trim().ifEmpty { null }
                     )
                     VideoFeedPreferences.saveConfig(context, config)
                     activeConfig = VideoFeedPreferences.getConfig(context)
@@ -140,6 +155,7 @@ fun VideoFeedConfigScreen() {
                     zoneIdInput = ""
                     adUnitPathInput = ""
                     videoIdInput = ""
+                    carouselHeightInput = ""
                     activeConfig = VideoFeedPreferences.getConfig(context)
                     scope.launch { snackbarHostState.showSnackbar("Configuration réinitialisée") }
                 },
@@ -161,6 +177,7 @@ fun VideoFeedConfigScreen() {
             ConfigLine("Zone ID", activeConfig.zoneId ?: "—")
             ConfigLine("Ad Unit Path", activeConfig.adUnitPath ?: "—")
             ConfigLine("Video ID", activeConfig.videoId ?: "—")
+            ConfigLine("Hauteur carrousel (vh)", activeConfig.carouselHeightVh ?: "$DEFAULT_VF_CAROUSEL_HEIGHT_VH (défaut)")
 
             Spacer(modifier = Modifier.height(24.dp))
         }
