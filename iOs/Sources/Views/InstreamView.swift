@@ -10,10 +10,22 @@ struct InstreamView: View {
     @AppStorage("sound") private var sound = 1
     @AppStorage("ad") private var ad = 1
     @AppStorage("refererURL") private var refererURL = "https://www.digiteka.com"
-    @AppStorage("consentString") private var consentString = "CQlo8kAQlo8kAAHABBENCiFsAP_gAEPgAAAALAEB7C_cRSFicSZn4LsgSQxewUhCoMAhBAIIACwBiAIAJJwG1mECIAjAgCAKABIAICRAAQAlCADABAAAAIABITCEIEAQARAAIqBAAAARQgIACAhAGQAAGAAQgMJUAgEAkAMECBqoQFhAAQAgigAQIAAlAICFAAAAAAAgQAAAIAAAAmwQEgAAcAIAEAAAAFEMAAAAoAECAAAAEAAQAAAAQBAAAAAAAAAgAQAIgAQAAAAABBYAgPYX7iKQsTiQI_BdkASGL2CkAVBgEIIBBAASAMQBABJGAWswgRAEQAAQBAAIABASIAAAEIAAIAIAAABAAJCIQgAgCACIAABQIAAACKEAAAAEIASAAAwACEBhKgAAgEAAggANUCAsAACAEEUAABAAAoBAQgAAAAAAECAAABAAAAEyAAkAADgBAAgAAAAIhgAAAFAAAQAAAAgACAAAACAAAAAAAAAAEAAABEACAAAAAAIAwSADAAEGSB0AGAAIMkEIAMAAQZIJQAYAAgyQUgAwABBkgtABgACDJAAA.ILAEB7C_cRSFicSZn4LsgSQxewUhCoMAhBAIIACwBiAIAJJwG1mECIAjAgCAKABIAICRAAQAlCADABAAAAIABITCEIEAQARAAIqBAAAARQgIACAhAGQAAGAAQgMJUAgEAkAMECBqoQFhAAQAgigAQIAAlAICFAAAAAAAgQAAAIAAAAmwQEgAAcAIAEAAAAFEMAAAAoAECAAAAEAAQAAAAQBAAAAAAAAAgAQAIgAQAAAAABAA.f_wAH_wAAAAA"
-    @AppStorage("newplayerDomain") private var newplayer = ""
+    @AppStorage("consentStringEnabled") private var consentStringEnabled = true
+    @AppStorage("newplayerMode") private var newplayerModeRaw = NewplayerMode.legacy.rawValue
+    @AppStorage("newplayerBranchName") private var newplayerBranchName = ""
+    @AppStorage("newplayerLocalIP") private var newplayerLocalIP = ""
+    @AppStorage("tagParam") private var tagParam = ""
     @State private var showLogs = false
     @State private var reloadToken = UUID()
+
+    private var consentString: String {
+        consentStringEnabled ? ConfigInstreamView.defaultConsentString : ""
+    }
+
+    private var newplayer: String? {
+        (NewplayerMode(rawValue: newplayerModeRaw) ?? .legacy)
+            .resolvedValue(branchName: newplayerBranchName, localIP: newplayerLocalIP)
+    }
 
     private var html: String {
         HTMLGenerator.generateInstream(
@@ -25,7 +37,8 @@ struct InstreamView: View {
             ad: ad,
             refererURL: refererURL,
             consentString: consentString,
-            newplayer: newplayer.isEmpty ? nil : newplayer
+            newplayer: newplayer,
+            tagParam: tagParam.isEmpty ? nil : tagParam
         )
     }
 

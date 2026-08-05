@@ -16,14 +16,16 @@
 		B3EDCDFA9FEEF2468D614563 /* LabeledRow.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8E6BF34846A6C08533A5E560 /* LabeledRow.swift */; };
 		CB1EE90105B8E7582DCB4DE7 /* ContentView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9C1AB6795E0A044FB6E55368 /* ContentView.swift */; };
 		CD5A2CCFE43C181A2E9612CA /* EventLog.swift in Sources */ = {isa = PBXBuildFile; fileRef = F3F82EB668076DC3B15D7F1D /* EventLog.swift */; };
+		DEABD1A90FA8F57E5FEB057F /* NewplayerMode.swift in Sources */ = {isa = PBXBuildFile; fileRef = 46428E2EB96F86692D85ABED /* NewplayerMode.swift */; };
 		FCD35CC2F93FD70F22514F0A /* PlayerViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6E887EC831977F96D38FB384 /* PlayerViewModel.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
 		01CB4A517D290D8B205A0060 /* InstreamView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = InstreamView.swift; sourceTree = "<group>"; };
 		06E6E9F2CDB36817F0F2A5C6 /* PlayerWebView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PlayerWebView.swift; sourceTree = "<group>"; };
-		2AB1A4CD6CB536F92DCFFC50 /* DTKTester.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = DTKTester.app; sourceTree = BUILT_PRODUCTS_DIR; };
+		2AB1A4CD6CB536F92DCFFC50 /* DTKTester.app */ = {isa = PBXFileReference; includeInIndex = 0; lastKnownFileType = wrapper.application; path = DTKTester.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		3648D0882739BCEA9386D827 /* ConfigInstreamView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ConfigInstreamView.swift; sourceTree = "<group>"; };
+		46428E2EB96F86692D85ABED /* NewplayerMode.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NewplayerMode.swift; sourceTree = "<group>"; };
 		4CEBEB05E94FFD9D00E268D6 /* DTKTesterApp.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DTKTesterApp.swift; sourceTree = "<group>"; };
 		4E4D7209AF10A4B3B317E5DC /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
 		6E887EC831977F96D38FB384 /* PlayerViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PlayerViewModel.swift; sourceTree = "<group>"; };
@@ -47,6 +49,7 @@
 			isa = PBXGroup;
 			children = (
 				F3F82EB668076DC3B15D7F1D /* EventLog.swift */,
+				46428E2EB96F86692D85ABED /* NewplayerMode.swift */,
 			);
 			path = Models;
 			sourceTree = "<group>";
@@ -194,6 +197,7 @@
 				103E1F4C494393FC7D53C3FB /* HTMLGenerator.swift in Sources */,
 				0D90B0EFE52D961E38ED61A7 /* InstreamView.swift in Sources */,
 				B3EDCDFA9FEEF2468D614563 /* LabeledRow.swift in Sources */,
+				DEABD1A90FA8F57E5FEB057F /* NewplayerMode.swift in Sources */,
 				FCD35CC2F93FD70F22514F0A /* PlayerViewModel.swift in Sources */,
 				184B0F7F4D274037CC966AAA /* PlayerWebView.swift in Sources */,
 			);
@@ -210,7 +214,7 @@
 				CURRENT_PROJECT_VERSION = 1;
 				DEVELOPMENT_TEAM = "";
 				INFOPLIST_FILE = Sources/Info.plist;
-				IPHONEOS_DEPLOYMENT_TARGET = 15.5;
+				IPHONEOS_DEPLOYMENT_TARGET = 15.0;
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",
 					"@executable_path/Frameworks",
@@ -350,7 +354,7 @@
 				CURRENT_PROJECT_VERSION = 1;
 				DEVELOPMENT_TEAM = "";
 				INFOPLIST_FILE = Sources/Info.plist;
-				IPHONEOS_DEPLOYMENT_TARGET = 15.5;
+				IPHONEOS_DEPLOYMENT_TARGET = 15.0;
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",
 					"@executable_path/Frameworks",

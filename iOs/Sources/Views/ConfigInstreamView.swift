@@ -1,12 +1,38 @@
 import SwiftUI
+import UIKit
 
 struct ConfigInstreamView: View {
+    static let defaultConsentString = "CQlo8kAQlo8kAAHABBENCiFsAP_gAEPgAAAALAEB7C_cRSFicSZn4LsgSQxewUhCoMAhBAIIACwBiAIAJJwG1mECIAjAgCAKABIAICRAAQAlCADABAAAAIABITCEIEAQARAAIqBAAAARQgIACAhAGQAAGAAQgMJUAgEAkAMECBqoQFhAAQAgigAQIAAlAICFAAAAAAAgQAAAIAAAAmwQEgAAcAIAEAAAAFEMAAAAoAECAAAAEAAQAAAAQBAAAAAAAAAgAQAIgAQAAAAABBYAgPYX7iKQsTiQI_BdkASGL2CkAVBgEIIBBAASAMQBABJGAWswgRAEQAAQBAAIABASIAAAEIAAIAIAAABAAJCIQgAgCACIAABQIAAACKEAAAAEIASAAAwACEBhKgAAgEAAggANUCAsAACAEEUAABAAAoBAQgAAAAAAECAAABAAAAEyAAkAADgBAAgAAAAIhgAAAFAAAQAAAAgACAAAACAAAAAAAAAAEAAABEACAAAAAAIAwSADAAEGSB0AGAAIMkEIAMAAQZIJQAYAAgyQUgAwABBkgtABgACDJAAA.ILAEB7C_cRSFicSZn4LsgSQxewUhCoMAhBAIIACwBiAIAJJwG1mECIAjAgCAKABIAICRAAQAlCADABAAAAIABITCEIEAQARAAIqBAAAARQgIACAhAGQAAGAAQgMJUAgEAkAMECBqoQFhAAQAgigAQIAAlAICFAAAAAAAgQAAAIAAAAmwQEgAAcAIAEAAAAFEMAAAAoAECAAAAEAAQAAAAQBAAAAAAAAAgAQAIgAQAAAAABAA.f_wAH_wAAAAA"
+
+    @State private var copiedURL = false
     @AppStorage("mdtk") private var mdtk = "01211820"
     @AppStorage("src") private var src = "3v83mr3"
     @AppStorage("zone") private var zone = "3"
     @AppStorage("refererURL") private var refererURL = "https://www.digiteka.com"
-    @AppStorage("consentString") private var consentString = ""
-    @AppStorage("newplayerDomain") private var newplayer = ""
+    @AppStorage("consentStringEnabled") private var consentStringEnabled = true
+    @AppStorage("newplayerMode") private var newplayerModeRaw = NewplayerMode.legacy.rawValue
+    @AppStorage("newplayerBranchName") private var newplayerBranchName = ""
+    @AppStorage("newplayerLocalIP") private var newplayerLocalIP = ""
+    @AppStorage("tagParam") private var tagParam = ""
+
+    private var consentString: String {
+        consentStringEnabled ? Self.defaultConsentString : ""
+    }
+
+    private var newplayerMode: NewplayerMode {
+        NewplayerMode(rawValue: newplayerModeRaw) ?? .legacy
+    }
+
+    private var newplayerModeBinding: Binding<NewplayerMode> {
+        Binding(
+            get: { newplayerMode },
+            set: { newplayerModeRaw = $0.rawValue }
+        )
+    }
+
+    private var newplayer: String? {
+        newplayerMode.resolvedValue(branchName: newplayerBranchName, localIP: newplayerLocalIP)
+    }
 
     private var iframeURLPreview: String {
         HTMLGenerator.iframeURL(
@@ -16,9 +42,10 @@ struct ConfigInstreamView: View {
             autoplay: 1,
             sound: 1,
             ad: 1,
+            newplayer: newplayer,
             refererURL: refererURL,
-            consentString: consentString,
-            newplayer: newplayer.isEmpty ? nil : newplayer
+            tagParam: tagParam.isEmpty ? nil : tagParam,
+            consentString: consentString
         )
     }
 
@@ -37,14 +64,14 @@ struct ConfigInstreamView: View {
                         .multilineTextAlignment(.trailing)
                         .keyboardType(.numberPad)
                 }
-                LabeledRow("SRC") {
+                LabeledRow("ID Vidéo") {
                     TextField("ex: 3v83mr3", text: $src)
                         .multilineTextAlignment(.trailing)
                         .autocorrectionDisabled()
                         .textInputAutocapitalization(.never)
                 }
                 VStack(alignment: .leading, spacing: 4) {
-                    Text("URL référent")
+                    Text("URL referrer")
                         .font(.subheadline)
                     TextField("facultatif — ex: https://monsite.com", text: $refererURL)
                         .font(.footnote.monospaced())
@@ -53,18 +80,55 @@ struct ConfigInstreamView: View {
                         .keyboardType(.URL)
                         .foregroundStyle(refererURL.isEmpty ? .secondary : .primary)
                 }
+
                 VStack(alignment: .leading, spacing: 4) {
-                    Text("Newplayer")
+                    Text("Tag Param")
                         .font(.subheadline)
-                    TextField("facultatif — ex: prod", text: $newplayer)
+                    TextField("facultatif — ex: monTag", text: $tagParam)
                         .font(.footnote.monospaced())
                         .autocorrectionDisabled()
                         .textInputAutocapitalization(.never)
-                        .keyboardType(.URL)
-                        .foregroundStyle(newplayer.isEmpty ? .secondary : .primary)
-                    Text("prod ou https://192.168.XXX.XXX:YYY/dist ou https://XXX.d2sdl16pluelsx.amplifyapp.com")
-                        .font(.caption)
-                        .foregroundStyle(.secondary)
+                        .foregroundStyle(tagParam.isEmpty ? .secondary : .primary)
+                }
+
+                VStack(alignment: .leading, spacing: 4) {
+                    Text("Consent String")
+                        .font(.subheadline)
+                    Picker("Consent String", selection: $consentStringEnabled) {
+                        Text("Oui").tag(true)
+                        Text("Non").tag(false)
+                    }
+                    .pickerStyle(.menu)
+                }
+
+                VStack(alignment: .leading, spacing: 4) {
+                    Text("Type de player")
+                        .font(.subheadline)
+
+                    Picker("Newplayer", selection: newplayerModeBinding) {
+                        ForEach(NewplayerMode.allCases) { mode in
+                            Text(mode.label).tag(mode)
+                        }
+                    }
+                    .pickerStyle(.menu)
+
+                    if newplayerMode == .recette {
+                        TextField("Nom de la branche — ex: dev ou SUP-123", text: $newplayerBranchName)
+                            .font(.footnote.monospaced())
+                            .autocorrectionDisabled()
+                            .textInputAutocapitalization(.never)
+                            .keyboardType(.numbersAndPunctuation)
+                            .foregroundStyle(newplayerBranchName.isEmpty ? .secondary : .primary)
+                    }
+
+                    if newplayerMode == .local {
+                        TextField("Adresse IP — ex: 192.168.X.X:YYYY", text: $newplayerLocalIP)
+                            .font(.footnote.monospaced())
+                            .autocorrectionDisabled()
+                            .textInputAutocapitalization(.never)
+                            .keyboardType(.numbersAndPunctuation)
+                            .foregroundStyle(newplayerLocalIP.isEmpty ? .secondary : .primary)
+                    }
                 }
             } header: {
                 Text("Configuration")
@@ -72,26 +136,31 @@ struct ConfigInstreamView: View {
 
             // ── Résumé de la configuration active ───────────────────────────
             Section {
-                paramRow(label: "MDTK", value: mdtk, placeholder: "Non renseigné")
-                paramRow(label: "Zone", value: zone, placeholder: "Non renseignée")
-                paramRow(label: "SRC", value: src, placeholder: "Non renseigné")
-                paramRow(label: "Referer", value: refererURL, placeholder: "Aucun")
-                LabeledRow("Newplayer") {
-                    Text(newplayer.isEmpty ? "désactivé" : newplayer)
-                        .foregroundStyle(newplayer.isEmpty ? .tertiary : .primary)
-                        .font(.footnote.monospaced())
-                        .lineLimit(1)
-                        .textSelection(.enabled)
-                }
-
                 VStack(alignment: .leading, spacing: 6) {
-                    Text("URL iframe")
-                        .font(.caption)
-                        .foregroundStyle(.secondary)
+                    HStack {
+                        Text("URL iframe")
+                            .font(.caption)
+                            .foregroundStyle(.secondary)
+                        Spacer()
+                        Button {
+                            UIPasteboard.general.string = iframeURLPreview
+                            withAnimation { copiedURL = true }
+                            Task {
+                                try? await Task.sleep(nanoseconds: 1_200_000_000)
+                                withAnimation { copiedURL = false }
+                            }
+                        } label: {
+                            Label(copiedURL ? "Copié" : "Copier", systemImage: copiedURL ? "checkmark" : "doc.on.doc")
+                                .font(.caption)
+                        }
+                        .buttonStyle(.bordered)
+                        .controlSize(.mini)
+                    }
                     Text(iframeURLPreview)
                         .font(.caption2.monospaced())
                         .foregroundStyle(.secondary)
-                        .lineLimit(6)
+                        .lineLimit(nil)
+                        .fixedSize(horizontal: false, vertical: true)
                         .textSelection(.enabled)
                 }
                 .padding(.vertical, 2)

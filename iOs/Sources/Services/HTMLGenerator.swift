@@ -12,9 +12,10 @@ struct HTMLGenerator {
         autoplay: Int,
         sound: Int,
         ad: Int,
+        newplayer: String? = nil,
         refererURL: String,
-        consentString: String,
-        newplayer: String? = nil
+        tagParam: String? = nil,
+        consentString: String
     ) -> String {
         var url = "https://www.ultimedia.com/deliver/generic/iframe"
         url += "/mdtk/\(mdtk)"
@@ -37,6 +38,10 @@ struct HTMLGenerator {
         if let newplayerDomain = newplayer, !newplayerDomain.isEmpty {
             queryItems.append("newplayer=\(newplayerDomain)")
         }
+        if let tag = tagParam, !tag.isEmpty {
+            let encodedTag = tag.addingPercentEncoding(withAllowedCharacters: .urlQueryAllowed) ?? tag
+            queryItems.append("tagparam=\(encodedTag)")
+        }
         if !queryItems.isEmpty {
             url += "?" + queryItems.joined(separator: "&")
         }
@@ -55,7 +60,8 @@ struct HTMLGenerator {
         ad: Int,
         refererURL: String,
         consentString: String,
-        newplayer: String? = nil
+        newplayer: String? = nil,
+        tagParam: String? = nil
     ) -> String {
         let playerSrc = iframeURL(
             mdtk: mdtk,
@@ -64,9 +70,10 @@ struct HTMLGenerator {
             autoplay: autoplay,
             sound: sound,
             ad: ad,
+            newplayer: newplayer,
             refererURL: refererURL,
-            consentString: consentString,
-            newplayer: newplayer
+            tagParam: tagParam,
+            consentString: consentString
         )
 
         return """
