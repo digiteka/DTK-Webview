@@ -39,7 +39,7 @@ fun destroyWebViewsRecursively(view: View) {
 fun enableThirdPartyCookiesRecursively(view: View) {
     if (view is WebView) {
         CookieManager.getInstance().setAcceptThirdPartyCookies(view, true)
-        // Ne pas wrapper le WebViewClient du VideoFeedCarousel : le SDK gère lui-même
+        // Ne pas wrapper le WebViewClient du VideoFeedCarrousel : le SDK gère lui-même
         // la navigation (clic → lancement VideoFeedActivity) via son WebViewClient.
         // Wrapper ce client casse silencieusement le clic sur les vignettes.
         if (view !is VideoFeedCarousel) {

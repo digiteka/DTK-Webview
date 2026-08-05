@@ -14,7 +14,7 @@ import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
 import com.example.digitest.consent.ConsentManager
-import com.example.digitest.ui.CarouselScreen
+import com.example.digitest.ui.CarrouselScreen
 import com.example.digitest.ui.CookieManagerScreen
 import com.example.digitest.ui.HomeScreen
 import com.example.digitest.ui.InstreamArticleScreen
@@ -49,7 +49,7 @@ class MainActivity : ComponentActivity() {
                         ) {
                             composable("home") { HomeScreen(navController) }
                             composable("instream") { InstreamArticleScreen() }
-                            composable("carousel") { CarouselScreen() }
+                            composable("carrousel") { CarrouselScreen() }
                             composable("videofeed_config") { VideoFeedConfigScreen() }
                             composable("nosdk") { NoSdkPlayerScreen() }
                             composable("instream_config") { InstreamConfigScreen() }

@@ -10,7 +10,7 @@
 2. [HomeScreen](#2-homescreen)
 3. [InstreamArticleScreen](#3-instreamarticlescreen)
 4. [NoSdkPlayerScreen](#4-nosdk-player-screen)
-5. [CarouselScreen](#5-carouselscreen)
+5. [CarrouselScreen](#5-carrouselscreen)
 6. [CookieManagerScreen](#6-cookiemanagerscreen)
 7. [InstreamConfigScreen](#7-instreamconfigscreen)
 8. [VideoFeedConfigScreen](#8-videofeedconfigscreen)
@@ -70,7 +70,7 @@ Each card is a clickable row with:
 |---|-------|----------|------------------|
 | 1 | SDK Instream | Intégration via le SDK natif | InstreamArticleScreen |
 | 2 | Instream sans SDK | Lecture via WebView / iframe | NoSdkPlayerScreen |
-| 3 | VideoFeed Carousel | Intégration du carousel vidéo | CarouselScreen |
+| 3 | VideoFeed Carrousel | Intégration du carrousel vidéo | CarrouselScreen |
 | 4 | VideoFeed Plein Écran | Lance l'Activity VideoFeed | VideoFeedActivity (external) |
 | 5 | Debug Cookies | Gérer les cookies ultimedia.com | CookieManagerScreen |
 | 6 | Config InStream | Paramètres SDK & WebView | InstreamConfigScreen |
@@ -236,19 +236,19 @@ When the user taps the fullscreen button inside the player:
 
 ---
 
-## 5. CarouselScreen
+## 5. CarrouselScreen
 
 ### 5.1 Purpose
 
-Displays a VideoFeed horizontal video carousel, simulating an editorial page integration.
+Displays a VideoFeed horizontal video carrousel, simulating an editorial page integration.
 
 ### 5.2 Layout
 
-- Top app bar: back arrow, title "VideoFeed Carousel".
+- Top app bar: back arrow, title "VideoFeed Carrousel".
 - Vertically scrollable column:
-  - **Title text** above carousel: "Vidéos recommandées" (or similar heading).
-  - **Carousel**: `VideoFeedCarousel` rendered via AndroidView, full screen width, **height: 280dp**. The carousel scrolls horizontally within this fixed height.
-  - **Description text** below carousel: Lorem Ipsum paragraphs explaining the integration context.
+  - **Title text** above carrousel: "Vidéos recommandées" (or similar heading).
+  - **Carrousel**: `VideoFeedCarrousel` rendered via AndroidView, full screen width, **height: 280dp**. The carrousel scrolls horizontally within this fixed height.
+  - **Description text** below carrousel: Lorem Ipsum paragraphs explaining the integration context.
 
 ### 5.3 Configuration Read on Entry
 
@@ -257,9 +257,9 @@ Reads from "videofeed_prefs" SharedPreferences:
 - `zoneId` (default: null — not specified)
 - `adUnitPath` (default: null — not specified)
 
-Carousel is loaded via: `carousel.load(mdtk, adUnitPath, zoneId)`.
+Carrousel is loaded via: `carrousel.load(mdtk, adUnitPath, zoneId)`.
 
-### 5.4 Carousel Interactions
+### 5.4 Carrousel Interactions
 
 - **Horizontal swipe**: browse video thumbnails.
 - **Tap on a video**: the VideoFeed SDK handles this internally (typically opens a fullscreen vertical video feed — TikTok-style). This is managed entirely by the SDK.
@@ -274,8 +274,8 @@ Carousel is loaded via: `carousel.load(mdtk, adUnitPath, zoneId)`.
 
 ### 5.6 Lifecycle / Cleanup
 
-- On screen exit: all WebViews within the carousel are destroyed.
-- Third-party cookies are enabled on WebViews found inside the carousel widget on layout.
+- On screen exit: all WebViews within the carrousel are destroyed.
+- Third-party cookies are enabled on WebViews found inside the carrousel widget on layout.
 
 ### 5.7 Navigation
 
@@ -463,7 +463,7 @@ Same pattern as Section 1. Shows 5 values including Host.
 
 ### 8.1 Purpose
 
-Allows the developer to override VideoFeed SDK parameters. Persisted in SharedPreferences, applied on next launch of the Carousel or VideoFeed full-screen.
+Allows the developer to override VideoFeed SDK parameters. Persisted in SharedPreferences, applied on next launch of the Carrousel or VideoFeed full-screen.
 
 ### 8.2 Layout
 
@@ -558,7 +558,7 @@ From "videofeed_prefs" SharedPreferences (defaults used if not configured):
 | HomeScreen card corner radius | ~12dp |
 | HomeScreen card horizontal margin | ~16dp |
 | HomeScreen card-to-card gap | ~12dp |
-| Carousel height | 280dp |
+| Carrousel height | 280dp |
 | Main player aspect ratio | 16:9 (full width) |
 | Visible player width | 65% of screen width |
 | Visible player margins | 12dp (horizontal) + 12dp + nav bar height (vertical) |
@@ -586,7 +586,7 @@ ConsentForm (modal, blocking) ──► HomeScreen
                                       │
               ┌───────────────────────┼────────────────────────┐
               │                       │                        │
-   InstreamArticleScreen    NoSdkPlayerScreen          CarouselScreen
+   InstreamArticleScreen    NoSdkPlayerScreen          CarrouselScreen
               │                       │                        │
               └───────────────────────┘────────────────────────┘
                                       │

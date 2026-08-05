@@ -32,9 +32,6 @@ struct HTMLGenerator {
         if !encodedReferer.isEmpty {
             queryItems.append("urlfacebook=\(encodedReferer)")
         }
-        if !consentString.isEmpty {
-            queryItems.append("gdprconsentstring=\(consentString)")
-        }
         if let newplayerDomain = newplayer, !newplayerDomain.isEmpty {
             queryItems.append("newplayer=\(newplayerDomain)")
         }
@@ -42,6 +39,10 @@ struct HTMLGenerator {
             let encodedTag = tag.addingPercentEncoding(withAllowedCharacters: .urlQueryAllowed) ?? tag
             queryItems.append("tagparam=\(encodedTag)")
         }
+        if !consentString.isEmpty {
+            queryItems.append("gdprconsentstring=\(consentString)")
+        }
+        
         if !queryItems.isEmpty {
             url += "?" + queryItems.joined(separator: "&")
         }

@@ -1,5 +1,6 @@
 package com.example.digitest.ui
 
+import android.webkit.CookieManager
 import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
@@ -34,7 +35,7 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
-import com.example.digitest.DEFAULT_VF_CAROUSEL_HEIGHT_VH
+import com.example.digitest.DEFAULT_VF_CARROUSEL_HEIGHT_VH
 import com.example.digitest.DEFAULT_VF_MDTK
 import com.example.digitest.VideoFeedConfig
 import com.example.digitest.VideoFeedPreferences
@@ -54,7 +55,9 @@ fun VideoFeedConfigScreen() {
     var zoneIdInput by rememberSaveable { mutableStateOf(initialConfig.zoneId ?: "") }
     var adUnitPathInput by rememberSaveable { mutableStateOf(initialConfig.adUnitPath ?: "") }
     var videoIdInput by rememberSaveable { mutableStateOf(initialConfig.videoId ?: "") }
-    var carouselHeightInput by rememberSaveable { mutableStateOf(initialConfig.carouselHeightVh ?: "") }
+    var carrouselHeightInput by rememberSaveable { mutableStateOf(initialConfig.carrouselHeightVh ?: "") }
+    var vfBranchInput by rememberSaveable { mutableStateOf(initialConfig.vfBranch ?: "") }
+    var carrBranchInput by rememberSaveable { mutableStateOf(initialConfig.carrBranch ?: "") }
     var activeConfig by remember { mutableStateOf(initialConfig) }
 
     Box(
@@ -118,12 +121,32 @@ fun VideoFeedConfigScreen() {
             )
 
             OutlinedTextField(
-                value = carouselHeightInput,
+                value = carrouselHeightInput,
                 onValueChange = { input ->
-                    carouselHeightInput = input.filter { it.isDigit() }
+                    carrouselHeightInput = input.filter { it.isDigit() }
                 },
                 label = { Text("Hauteur carrousel (vh)") },
-                placeholder = { Text("$DEFAULT_VF_CAROUSEL_HEIGHT_VH (carousel uniquement)") },
+                placeholder = { Text("$DEFAULT_VF_CARROUSEL_HEIGHT_VH (carrousel uniquement)") },
+                singleLine = true,
+                modifier = Modifier.fillMaxWidth(),
+                colors = configFieldColors()
+            )
+
+            OutlinedTextField(
+                value = vfBranchInput,
+                onValueChange = { vfBranchInput = it },
+                label = { Text("VF_BRANCH") },
+                placeholder = { Text("Nom de la branche Amplify (SUP-132, EVO-456....) ou local") },
+                singleLine = true,
+                modifier = Modifier.fillMaxWidth(),
+                colors = configFieldColors()
+            )
+
+            OutlinedTextField(
+                value = carrBranchInput,
+                onValueChange = { carrBranchInput = it },
+                label = { Text("CARR_BRANCH") },
+                placeholder = { Text("Nom de la branche Amplify (SUP-132, EVO-456....) ou local") },
                 singleLine = true,
                 modifier = Modifier.fillMaxWidth(),
                 colors = configFieldColors()
@@ -136,9 +159,14 @@ fun VideoFeedConfigScreen() {
                         zoneId = zoneIdInput.trim().ifEmpty { null },
                         adUnitPath = adUnitPathInput.trim().ifEmpty { null },
                         videoId = videoIdInput.trim().ifEmpty { null },
-                        carouselHeightVh = carouselHeightInput.trim().ifEmpty { null }
+                        carrouselHeightVh = carrouselHeightInput.trim().ifEmpty { null },
+                        vfBranch = vfBranchInput.trim().ifEmpty { null },
+                        carrBranch = carrBranchInput.trim().ifEmpty { null }
                     )
                     VideoFeedPreferences.saveConfig(context, config)
+                    if (config.carrBranch.equals("local", ignoreCase = true)) {
+                        setLocalIpCarrCookie()
+                    }
                     activeConfig = VideoFeedPreferences.getConfig(context)
                     scope.launch { snackbarHostState.showSnackbar("Configuration sauvegardée") }
                 },
@@ -155,7 +183,9 @@ fun VideoFeedConfigScreen() {
                     zoneIdInput = ""
                     adUnitPathInput = ""
                     videoIdInput = ""
-                    carouselHeightInput = ""
+                    carrouselHeightInput = ""
+                    vfBranchInput = ""
+                    carrBranchInput = ""
                     activeConfig = VideoFeedPreferences.getConfig(context)
                     scope.launch { snackbarHostState.showSnackbar("Configuration réinitialisée") }
                 },
@@ -177,7 +207,9 @@ fun VideoFeedConfigScreen() {
             ConfigLine("Zone ID", activeConfig.zoneId ?: "—")
             ConfigLine("Ad Unit Path", activeConfig.adUnitPath ?: "—")
             ConfigLine("Video ID", activeConfig.videoId ?: "—")
-            ConfigLine("Hauteur carrousel (vh)", activeConfig.carouselHeightVh ?: "$DEFAULT_VF_CAROUSEL_HEIGHT_VH (défaut)")
+            ConfigLine("Hauteur carrousel (vh)", activeConfig.carrouselHeightVh ?: "$DEFAULT_VF_CARROUSEL_HEIGHT_VH (défaut)")
+            ConfigLine("VF_BRANCH", activeConfig.vfBranch ?: "—")
+            ConfigLine("CARR_BRANCH", activeConfig.carrBranch ?: "—")
 
             Spacer(modifier = Modifier.height(24.dp))
         }
@@ -187,6 +219,19 @@ fun VideoFeedConfigScreen() {
             modifier = Modifier.align(Alignment.BottomCenter)
         )
     }
+}
+
+// Le launcher VideoFeed lit ce cookie sur .digiteka.com (document.cookie) quand
+// CARR_BRANCH vaut "local", pour pointer vers le serveur dev via IP LAN plutôt
+// que localhost (inaccessible depuis un device/émulateur).
+private fun setLocalIpCarrCookie() {
+    val cm = CookieManager.getInstance()
+    cm.setAcceptCookie(true)
+    cm.setCookie(
+        "https://digiteka.com",
+        "localIP_CARR=192.168.1.136; Domain=.digiteka.com; Path=/; SameSite=None; Secure"
+    )
+    cm.flush()
 }
 
 @Composable

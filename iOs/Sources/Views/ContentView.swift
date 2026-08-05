@@ -5,20 +5,48 @@ struct ContentView: View {
         // NavigationView + style .stack : NavigationStack exige iOS 16.
         NavigationView {
             List {
-                NavigationLink(destination: InstreamView()) {
-                    ScenarioRow(
-                        icon: "newspaper",
-                        title: "Instream sans SDK",
-                        subtitle: "Player intégré dans un article Lorem Ipsum"
-                    )
+                Section {
+                    NavigationLink(destination: InstreamView()) {
+                        ScenarioRow(
+                            icon: "newspaper",
+                            title: "Player sans SDK",
+                            subtitle: "Player chargé dans une webview Ultimedia"
+                        )
+                    }
+
+                    NavigationLink(destination: ConfigInstreamView()) {
+                        ScenarioRow(
+                            icon: "gearshape",
+                            title: "Configuration Player",
+                            subtitle: "Paramètres MDTK, Zone, SRC, Referer..."
+                        )
+                    }
                 }
 
-                NavigationLink(destination: ConfigInstreamView()) {
-                    ScenarioRow(
-                        icon: "slider.horizontal.3",
-                        title: "Config Instream",
-                        subtitle: "Paramètres MDTK, Zone, SRC, Referer"
-                    )
+                Section {
+                    NavigationLink(destination: VideoFeedCarrouselView()) {
+                        ScenarioRow(
+                            icon: "newspaper",
+                            title: "VideoFeed Carrousel",
+                            subtitle: "Carrousel intégré dans une page"
+                        )
+                    }
+
+                    NavigationLink(destination: /* todo */) {
+                        ScenarioRow(
+                            icon: "arrow.up.left.and.arrow.down.right",
+                            title: "VideoFeed Plein Ecran",
+                            subtitle: "Feed vidéo en plein écran"
+                        )
+                    }
+
+                    NavigationLink(destination: ConfigVideoFeedView()) {
+                        ScenarioRow(
+                            icon: "gearshape",
+                            title: "Configuration VideoFeed",
+                            subtitle: "Paramètres du feed vidéo"
+                        )
+                    }
                 }
             }
             .navigationTitle("DTK Tester")

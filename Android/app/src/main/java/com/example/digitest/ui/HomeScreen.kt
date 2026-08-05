@@ -95,10 +95,10 @@ fun HomeScreen(navController: NavController) {
         )
         Spacer(modifier = Modifier.height(12.dp))
         HomeCard(
-            title = "VideoFeed Carousel",
-            subtitle = "Carousel vidéo horizontal",
+            title = "VideoFeed Carrousel",
+            subtitle = "Carrousel vidéo horizontal",
             icon = Icons.Default.PlayArrow,
-            onClick = { navController.navigate("carousel") }
+            onClick = { navController.navigate("carrousel") }
         )
         Spacer(modifier = Modifier.height(12.dp))
         HomeCard(
@@ -116,15 +116,15 @@ fun HomeScreen(navController: NavController) {
         )
         Spacer(modifier = Modifier.height(12.dp))
         HomeCard(
-            title = "Config InStream",
-            subtitle = "Paramètres SDK et sans SDK InStream",
+            title = "Configuration Player",
+            subtitle = "Paramètres MDTK, Zone, SRC, Referer...",
             icon = Icons.Default.Settings,
             onClick = { navController.navigate("instream_config") }
         )
         Spacer(modifier = Modifier.height(12.dp))
         HomeCard(
-            title = "Config VideoFeed",
-            subtitle = "Paramètres MDTK, Zone, Ad Unit, Video ID",
+            title = "Configuration VideoFeed",
+            subtitle = "Paramètres MDTK, Zone, Ad Unit, Video ID...",
             icon = Icons.Default.Settings,
             onClick = { navController.navigate("videofeed_config") }
         )

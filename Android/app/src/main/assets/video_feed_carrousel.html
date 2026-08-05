@@ -1,0 +1,28 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+    <script defer src="https://videofeed.digiteka.com/launcher.min.js"></script>
+    <script type="text/javascript">
+        window.MDTK_videofeed = "${mdtk}";
+        window.MDTK_videofeed_gdprconsentstring = "${consentString}";
+        window.MDTK_carrousel_height = "95vh";
+        window.MDTK_carrousel_fromsdk = true;
+        window.MDTK_videofeed_adunit_path = "${adUnitPath}";
+        window.MDTK_videofeed_zone_index = "${zoneId}";
+        window.MDTK_VF_BRANCH = "${vfBranch}";
+        window.MDTK_CARR_BRANCH = "${carrBranch}";
+    </script>
+    <style>
+        body {
+            background-color: transparent;
+        }
+        #dtk-videofeed-carrousel {
+            background-color: transparent;
+        }
+    </style>
+</head>
+<body>
+<div id="dtk-videofeed-carrousel"></div>
+</body>
+</html>
