@@ -139,7 +139,7 @@ struct ConfigInstreamView: View {
             // ── Override manuel de l'URL du player ──────────────────────────
             Section {
                 VStack(alignment: .leading, spacing: 4) {
-                    Text("URL du player (override)")
+                    Text("URL du player override (iOS 18+)")
                         .font(.subheadline)
                     TextField(
                         "Remplacera les paramètres précédents",

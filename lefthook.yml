@@ -1,0 +1,5 @@
+pre-commit:
+  commands:
+    bump-ios-build-number:
+      glob: "iOs/**"
+      run: bash iOs/Scripts/bump_ios_build_number.sh
