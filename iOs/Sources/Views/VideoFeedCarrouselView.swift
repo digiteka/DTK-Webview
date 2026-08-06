@@ -89,7 +89,15 @@ private struct CarrouselWebView: UIViewRepresentable {
     }
 
     func makeUIView(context: Context) -> WKWebView {
-        let webView = WKWebView(frame: .zero)
+        // Lecture inline des <video> du carrousel — sans ça, WKWebView bascule en plein
+        // écran natif dès qu'une vidéo démarre après le tap utilisateur (comportement par
+        // défaut de allowsInlineMediaPlayback = false).
+        let config = WKWebViewConfiguration()
+        config.allowsInlineMediaPlayback = true
+        config.mediaTypesRequiringUserActionForPlayback = []
+        config.requiresUserActionForMediaPlayback = false
+
+        let webView = WKWebView(frame: .zero, configuration: config)
         webView.navigationDelegate = context.coordinator
         webView.scrollView.isScrollEnabled = false
         webView.isOpaque = false

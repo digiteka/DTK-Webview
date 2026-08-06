@@ -72,15 +72,6 @@ struct InstreamView: View {
                 .buttonStyle(.bordered)
                 .controlSize(.small)
 
-                Button {
-                    viewModel.clear()
-                    reloadToken = UUID()
-                } label: {
-                    Image(systemName: "arrow.clockwise")
-                }
-                .buttonStyle(.bordered)
-                .controlSize(.small)
-
                 Button { withAnimation { showLogs.toggle() } } label: {
                     Label(
                         showLogs ? "Fermer" : "Logs",

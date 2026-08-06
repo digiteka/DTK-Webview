@@ -17,6 +17,27 @@ struct PlayerWebView: UIViewRepresentable {
         Coordinator(viewModel: viewModel, action: action)
     }
 
+    final class KeyCommandWebView: WKWebView {
+        weak var coordinator: Coordinator?
+
+        override var keyCommands: [UIKeyCommand]? {
+            let inherited = (super.keyCommands ?? []).filter {
+                !($0.input == "r" && $0.modifierFlags.contains(.command))
+            }
+            let reload = UIKeyCommand(
+                title: "Recharger le player",
+                action: #selector(handleReloadShortcut),
+                input: "r",
+                modifierFlags: .command
+            )
+            return inherited + [reload]
+        }
+
+        @objc private func handleReloadShortcut() {
+            coordinator?.action.reload?()
+        }
+    }
+
     func makeUIView(context: Context) -> WKWebView {
         // ── Configuration ────────────────────────────────────────────────────
         let controller = WKUserContentController()
@@ -36,7 +57,8 @@ struct PlayerWebView: UIViewRepresentable {
         config.preferences.javaScriptCanOpenWindowsAutomatically = true
 
         // ── WebView ──────────────────────────────────────────────────────────
-        let webView = WKWebView(frame: .zero, configuration: config)
+        let webView = KeyCommandWebView(frame: .zero, configuration: config)
+        webView.coordinator = context.coordinator
         webView.navigationDelegate = context.coordinator
         webView.uiDelegate = context.coordinator
         webView.scrollView.bounces = true
