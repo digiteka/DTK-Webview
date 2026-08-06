@@ -2,7 +2,7 @@ import SwiftUI
 import VideoFeedSDK
 
 struct VideoFeedPleinEcranView: View {
-    @AppStorage("videoFeedMdtk") private var mdtk = "01573101"
+    @AppStorage("videoFeedMdtk") private var mdtk = "01412408"
     @AppStorage("videoFeedVideoId") private var videoId = ""
 
     var body: some View {

@@ -32,7 +32,7 @@ struct ContentView: View {
                         )
                     }
 
-                    NavigationLink(destination: /* todo */) {
+                    NavigationLink(destination: VideoFeedPleinEcranView()) {
                         ScenarioRow(
                             icon: "arrow.up.left.and.arrow.down.right",
                             title: "VideoFeed Plein Ecran",

@@ -5,6 +5,11 @@ options:
     iOS: "15.0"
   xcodeVersion: "15.0"
 
+packages:
+  VideoFeedSDK:
+    url: https://github.com/digiteka/videofeed-ios-build
+    exactVersion: 2.1.4
+
 targets:
   DTKTester:
     type: application
@@ -14,6 +19,8 @@ targets:
       - path: Sources
         excludes:
           - "**/.DS_Store"
+    dependencies:
+      - package: VideoFeedSDK
     # Déclaré ici pour que `xcodegen generate` régénère le scheme partagé
     # au lieu de le supprimer.
     scheme:

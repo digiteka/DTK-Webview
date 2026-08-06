@@ -199,4 +199,53 @@ struct HTMLGenerator {
         </html>
         """
     }
+
+    // MARK: - HTML VideoFeed Carrousel
+
+    /// Host servant launcher.min.js — bascule vers la preview Amplify de la branche VF_BRANCH si renseignée.
+    static func videoFeedHost(vfBranch: String?) -> String {
+        vfBranch.map { "\($0).d33gpayci0qt6k.amplifyapp.com" } ?? "videofeed.digiteka.com"
+    }
+
+    /// Injecte les globals window.MDTK_* attendus par launcher.min.js — même mécanisme que l'asset
+    /// Android video_feed_carrousel.html. Nécessaire car l'API Swift fermée du SDK (VideoFeedCarrouselViewSUI)
+    /// n'expose que mdtk/zoneId/adunitPath, pas les branches de preview (VF_BRANCH/CARR_BRANCH) ni le consentString.
+    static func generateVideoFeedCarrousel(
+        mdtk: String,
+        consentString: String,
+        adUnitPath: String?,
+        zoneId: Int?,
+        vfBranch: String?,
+        carrBranch: String?
+    ) -> String {
+        let launcherHost = videoFeedHost(vfBranch: vfBranch)
+
+        return """
+        <!doctype html>
+        <html>
+        <head>
+            <meta charset="UTF-8">
+            <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+            <script defer src="https://\(launcherHost)/launcher.min.js"></script>
+            <script type="text/javascript">
+                window.MDTK_videofeed = "\(mdtk)";
+                window.MDTK_videofeed_gdprconsentstring = "\(consentString)";
+                window.MDTK_carrousel_height = "95vh";
+                window.MDTK_carrousel_fromsdk = true;
+                window.MDTK_videofeed_adunit_path = "\(adUnitPath ?? "")";
+                window.MDTK_videofeed_zone_index = "\(zoneId.map(String.init) ?? "")";
+                window.MDTK_VF_BRANCH = "\(vfBranch ?? "")";
+                window.MDTK_CARR_BRANCH = "\(carrBranch ?? "")";
+            </script>
+            <style>
+                body { background-color: transparent; margin: 0; }
+                #dtk-videofeed-carrousel { background-color: transparent; }
+            </style>
+        </head>
+        <body>
+            <div id="dtk-videofeed-carrousel"></div>
+        </body>
+        </html>
+        """
+    }
 }

@@ -13,6 +13,7 @@
 		4161C2F95D355E6858231BB7 /* VideoFeedPleinEcranView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8BCAE65B5C4DB5D93F8D2B58 /* VideoFeedPleinEcranView.swift */; };
 		6519C86A87E6185358E1DEF3 /* ConfigVideoFeedView.swift in Sources */ = {isa = PBXBuildFile; fileRef = B5A2E5B7F2D5EF11DEB0418C /* ConfigVideoFeedView.swift */; };
 		73355719C63ED09D1994C11B /* DTKTesterApp.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4CEBEB05E94FFD9D00E268D6 /* DTKTesterApp.swift */; };
+		7EFE891C00ACCCBD75AAEC9D /* VideoFeedSDK in Frameworks */ = {isa = PBXBuildFile; productRef = EB25C209A55B2E1A1D214022 /* VideoFeedSDK */; };
 		974375A0B3F2FD5189FB1D72 /* ConfigInstreamView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3648D0882739BCEA9386D827 /* ConfigInstreamView.swift */; };
 		A229180386A685C2B01730B2 /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 4E4D7209AF10A4B3B317E5DC /* Assets.xcassets */; };
 		B3EDCDFA9FEEF2468D614563 /* LabeledRow.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8E6BF34846A6C08533A5E560 /* LabeledRow.swift */; };
@@ -41,6 +42,17 @@
 		B5A2E5B7F2D5EF11DEB0418C /* ConfigVideoFeedView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ConfigVideoFeedView.swift; sourceTree = "<group>"; };
 		F3F82EB668076DC3B15D7F1D /* EventLog.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = EventLog.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
+
+/* Begin PBXFrameworksBuildPhase section */
+		8E69495480154A288EC41925 /* Frameworks */ = {
+			isa = PBXFrameworksBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				7EFE891C00ACCCBD75AAEC9D /* VideoFeedSDK in Frameworks */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXFrameworksBuildPhase section */
 
 /* Begin PBXGroup section */
 		073175ABE4CC6F23D00CB089 /* App */ = {
@@ -138,6 +150,7 @@
 			buildPhases = (
 				025FEC144A7F5F5E752BBEE1 /* Sources */,
 				FC7617C6841FBDD8E9D7E1B7 /* Resources */,
+				8E69495480154A288EC41925 /* Frameworks */,
 			);
 			buildRules = (
 			);
@@ -145,6 +158,7 @@
 			);
 			name = DTKTester;
 			packageProductDependencies = (
+				EB25C209A55B2E1A1D214022 /* VideoFeedSDK */,
 			);
 			productName = DTKTester;
 			productReference = 2AB1A4CD6CB536F92DCFFC50 /* DTKTester.app */;
@@ -173,6 +187,9 @@
 			);
 			mainGroup = B570D9FD8E47B98DD51B5401;
 			minimizedProjectReferenceProxies = 1;
+			packageReferences = (
+				4C59F031EEA87CB43406CA3D /* XCRemoteSwiftPackageReference "videofeed-ios-build" */,
+			);
 			preferredProjectObjectVersion = 77;
 			productRefGroup = E50331253667BA48CDB505C2 /* Products */;
 			projectDirPath = "";
@@ -401,6 +418,25 @@
 			defaultConfigurationName = Debug;
 		};
 /* End XCConfigurationList section */
+
+/* Begin XCRemoteSwiftPackageReference section */
+		4C59F031EEA87CB43406CA3D /* XCRemoteSwiftPackageReference "videofeed-ios-build" */ = {
+			isa = XCRemoteSwiftPackageReference;
+			repositoryURL = "https://github.com/digiteka/videofeed-ios-build";
+			requirement = {
+				kind = exactVersion;
+				version = 2.1.4;
+			};
+		};
+/* End XCRemoteSwiftPackageReference section */
+
+/* Begin XCSwiftPackageProductDependency section */
+		EB25C209A55B2E1A1D214022 /* VideoFeedSDK */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = 4C59F031EEA87CB43406CA3D /* XCRemoteSwiftPackageReference "videofeed-ios-build" */;
+			productName = VideoFeedSDK;
+		};
+/* End XCSwiftPackageProductDependency section */
 	};
 	rootObject = 3DB709C71C2D27D155017967 /* Project object */;
 }

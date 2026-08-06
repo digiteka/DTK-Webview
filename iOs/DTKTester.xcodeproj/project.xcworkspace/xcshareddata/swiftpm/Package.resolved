@@ -1,0 +1,15 @@
+{
+  "originHash" : "db325e0b0411948183d969164e848e3a0aaa9c66331ed30737a9f42f97c7b715",
+  "pins" : [
+    {
+      "identity" : "videofeed-ios-build",
+      "kind" : "remoteSourceControl",
+      "location" : "https://github.com/digiteka/videofeed-ios-build.git",
+      "state" : {
+        "revision" : "09c8bfdf37e1620da4aed65a8f221ea7b0f9f981",
+        "version" : "2.1.4"
+      }
+    }
+  ],
+  "version" : 3
+}
