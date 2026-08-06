@@ -36,8 +36,7 @@ struct ConfigInstreamView: View {
     }
 
     private var iframeURLPreview: String {
-        guard playerURLOverride.isEmpty else { return playerURLOverride }
-        return HTMLGenerator.iframeURL(
+        HTMLGenerator.iframeURL(
             mdtk: mdtk.isEmpty ? "[MDTK]" : mdtk,
             zone: zone.isEmpty ? "[Zone]" : zone,
             src: src.isEmpty ? "[SRC]" : src,
@@ -47,7 +46,8 @@ struct ConfigInstreamView: View {
             newplayer: newplayer,
             refererURL: refererURL,
             tagParam: tagParam.isEmpty ? nil : tagParam,
-            consentString: consentString
+            consentString: consentString,
+            override: playerURLOverride
         )
     }
 

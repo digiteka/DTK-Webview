@@ -58,9 +58,24 @@ struct ContentView: View {
                 }
             }
             .navigationTitle("DTK Tester")
+            .safeAreaInset(edge: .bottom) {
+                Text(appVersion)
+                    .font(.caption)
+                    .foregroundStyle(.secondary)
+                    .frame(maxWidth: .infinity)
+                    .padding(.vertical, 8)
+                    .background(.bar)
+            }
         }
         // Évite le split view sur iPad, comportement proche de NavigationStack.
         .navigationViewStyle(.stack)
+    }
+
+    // MARKETING_VERSION / CURRENT_PROJECT_VERSION dans project.yml, injectées dans Info.plist au build.
+    private var appVersion: String {
+        let version = Bundle.main.infoDictionary?["CFBundleShortVersionString"] as? String ?? "?"
+        let build = Bundle.main.infoDictionary?["CFBundleVersion"] as? String ?? "?"
+        return "v\(version) (\(build))"
     }
 }
 

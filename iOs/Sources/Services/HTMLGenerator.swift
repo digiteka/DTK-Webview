@@ -4,7 +4,9 @@ struct HTMLGenerator {
 
     // MARK: - URL builder
 
-    /// Construit l'URL de l'iframe cross-origin (format chemin ultimedia)
+    /// Construit l'URL de l'iframe cross-origin (format chemin ultimedia). `override`, si non vide,
+    /// est retourné tel quel — source de vérité unique partagée par ConfigInstreamView (aperçu/copie)
+    /// et InstreamView (chargement réel), pour qu'aucun des deux n'ait sa propre logique de recalcul.
     static func iframeURL(
         mdtk: String,
         zone: String,
@@ -15,8 +17,13 @@ struct HTMLGenerator {
         newplayer: String? = nil,
         refererURL: String,
         tagParam: String? = nil,
-        consentString: String
+        consentString: String,
+        override: String? = nil
     ) -> String {
+        if let override, !override.isEmpty {
+            return override
+        }
+
         var url = "https://www.ultimedia.com/deliver/generic/iframe"
         url += "/mdtk/\(mdtk)"
         url += "/zone/\(zone)"
@@ -62,7 +69,8 @@ struct HTMLGenerator {
         refererURL: String,
         consentString: String,
         newplayer: String? = nil,
-        tagParam: String? = nil
+        tagParam: String? = nil,
+        playerURLOverride: String? = nil
     ) -> String {
         let playerSrc = iframeURL(
             mdtk: mdtk,
@@ -74,7 +82,8 @@ struct HTMLGenerator {
             newplayer: newplayer,
             refererURL: refererURL,
             tagParam: tagParam,
-            consentString: consentString
+            consentString: consentString,
+            override: playerURLOverride
         )
 
         return """

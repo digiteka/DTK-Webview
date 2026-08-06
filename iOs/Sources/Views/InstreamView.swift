@@ -15,6 +15,7 @@ struct InstreamView: View {
     @AppStorage("newplayerBranchName") private var newplayerBranchName = ""
     @AppStorage("newplayerLocalIP") private var newplayerLocalIP = ""
     @AppStorage("tagParam") private var tagParam = ""
+    @AppStorage("playerURLOverride") private var playerURLOverride = ""
     @State private var showLogs = false
     @State private var reloadToken = UUID()
 
@@ -38,7 +39,8 @@ struct InstreamView: View {
             refererURL: refererURL,
             consentString: consentString,
             newplayer: newplayer,
-            tagParam: tagParam.isEmpty ? nil : tagParam
+            tagParam: tagParam.isEmpty ? nil : tagParam,
+            playerURLOverride: playerURLOverride
         )
     }
 
