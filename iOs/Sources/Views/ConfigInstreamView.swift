@@ -14,6 +14,7 @@ struct ConfigInstreamView: View {
     @AppStorage("newplayerBranchName") private var newplayerBranchName = ""
     @AppStorage("newplayerLocalIP") private var newplayerLocalIP = ""
     @AppStorage("tagParam") private var tagParam = ""
+    @AppStorage("playerURLOverride") private var playerURLOverride = ""
 
     private var consentString: String {
         consentStringEnabled ? Self.defaultConsentString : ""
@@ -35,7 +36,8 @@ struct ConfigInstreamView: View {
     }
 
     private var iframeURLPreview: String {
-        HTMLGenerator.iframeURL(
+        guard playerURLOverride.isEmpty else { return playerURLOverride }
+        return HTMLGenerator.iframeURL(
             mdtk: mdtk.isEmpty ? "[MDTK]" : mdtk,
             zone: zone.isEmpty ? "[Zone]" : zone,
             src: src.isEmpty ? "[SRC]" : src,
@@ -134,6 +136,25 @@ struct ConfigInstreamView: View {
                 Text("Configuration")
             }
 
+            // ── Override manuel de l'URL du player ──────────────────────────
+            Section {
+                VStack(alignment: .leading, spacing: 4) {
+                    Text("URL du player (override)")
+                        .font(.subheadline)
+                    TextField(
+                        "Remplacera les paramètres précédents",
+                        text: $playerURLOverride
+                    )
+                    .font(.footnote.monospaced())
+                    .autocorrectionDisabled()
+                    .textInputAutocapitalization(.never)
+                    .keyboardType(.URL)
+                    .lineLimit(nil)
+                    .fixedSize(horizontal: false, vertical: true)
+                    .foregroundStyle(playerURLOverride.isEmpty ? .secondary : .primary)
+                }
+            }
+
             // ── Résumé de la configuration active ───────────────────────────
             Section {
                 VStack(alignment: .leading, spacing: 6) {
@@ -150,7 +171,7 @@ struct ConfigInstreamView: View {
                                 withAnimation { copiedURL = false }
                             }
                         } label: {
-                            Label(copiedURL ? "Copié" : "Copier", systemImage: copiedURL ? "checkmark" : "doc.on.doc")
+                            Label(copiedURL ? "Copiée" : "Copier l'url", systemImage: copiedURL ? "checkmark" : "doc.on.doc")
                                 .font(.caption)
                         }
                         .buttonStyle(.bordered)
@@ -165,9 +186,9 @@ struct ConfigInstreamView: View {
                 }
                 .padding(.vertical, 2)
             } header: {
-                Text("Résumé de la configuration active")
+                Text("URL du player générée")
             } footer: {
-                Text("L'URL ci-dessus est générée en temps réel à partir des paramètres saisis.")
+                Text("L'URL ci-dessus est construite en temps réel.")
             }
         }
         .navigationTitle("Config Instream")
