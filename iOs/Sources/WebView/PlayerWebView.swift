@@ -51,7 +51,7 @@ struct PlayerWebView: UIViewRepresentable {
         context.coordinator.webView = webView
         context.coordinator.action.reload = { [weak webView, weak coordinator = context.coordinator] in
             guard let webView, let coordinator else { return }
-            let base = URL(string: coordinator.lastBaseURL) ?? URL(string: "https://www.digiteka.com")
+            let base = URL(string: coordinator.lastBaseURL) ?? URL(string: "https://www.ultimedia.com")
             webView.loadHTMLString(coordinator.lastHTML, baseURL: base)
         }
 
@@ -62,7 +62,7 @@ struct PlayerWebView: UIViewRepresentable {
         guard context.coordinator.lastHTML != html else { return }
         context.coordinator.lastHTML = html
         context.coordinator.lastBaseURL = baseURL
-        let base = URL(string: baseURL) ?? URL(string: "https://www.digiteka.com")
+        let base = URL(string: baseURL) ?? URL(string: "https://www.ultimedia.com")
         webView.loadHTMLString(html, baseURL: base)
     }
 

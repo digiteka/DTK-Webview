@@ -21,6 +21,14 @@ struct ContentView: View {
                             subtitle: "Paramètres MDTK, Zone, SRC, Referer..."
                         )
                     }
+
+                    NavigationLink(destination: CookieManagerView()) {
+                        ScenarioRow(
+                            icon: "gearshape",
+                            title: "Configuration Cookie",
+                            subtitle: "Gestion des cookies ultimedia.com"
+                        )
+                    }
                 }
 
                 Section {

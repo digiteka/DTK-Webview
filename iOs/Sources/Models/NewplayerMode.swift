@@ -12,8 +12,8 @@ enum NewplayerMode: String, CaseIterable, Identifiable {
         switch self {
         case .legacy: return "Player Legacy"
         case .prod: return "Player 2026"
-        case .recette: return "Branche"
-        case .local: return "Local"
+        case .recette: return "Player 2026 : Amplify"
+        case .local: return "Player 2026 : Local"
         }
     }
 

@@ -8,7 +8,7 @@ struct ConfigInstreamView: View {
     @AppStorage("mdtk") private var mdtk = "01211820"
     @AppStorage("src") private var src = "3v83mr3"
     @AppStorage("zone") private var zone = "3"
-    @AppStorage("refererURL") private var refererURL = "https://www.digiteka.com"
+    @AppStorage("refererURL") private var refererURL = "https://www.ultimedia.com"
     @AppStorage("consentStringEnabled") private var consentStringEnabled = true
     @AppStorage("newplayerMode") private var newplayerModeRaw = NewplayerMode.legacy.rawValue
     @AppStorage("newplayerBranchName") private var newplayerBranchName = ""

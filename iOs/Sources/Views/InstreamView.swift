@@ -9,7 +9,7 @@ struct InstreamView: View {
     @AppStorage("autoplay") private var autoplay = 1
     @AppStorage("sound") private var sound = 1
     @AppStorage("ad") private var ad = 1
-    @AppStorage("refererURL") private var refererURL = "https://www.digiteka.com"
+    @AppStorage("refererURL") private var refererURL = "https://www.ultimedia.com"
     @AppStorage("consentStringEnabled") private var consentStringEnabled = true
     @AppStorage("newplayerMode") private var newplayerModeRaw = NewplayerMode.legacy.rawValue
     @AppStorage("newplayerBranchName") private var newplayerBranchName = ""
