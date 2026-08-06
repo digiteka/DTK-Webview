@@ -32,11 +32,15 @@ targets:
         DEVELOPMENT_TEAM: ""
         IPHONEOS_DEPLOYMENT_TARGET: "15.0"
         MARKETING_VERSION: "1.0.0"
-        CURRENT_PROJECT_VERSION: "3"
+        CURRENT_PROJECT_VERSION: "4"
     info:
       path: Sources/Info.plist
       properties:
         CFBundleDisplayName: DTK Tester
+        # Sans ces deux clés explicites, xcodegen retombe sur ses valeurs par défaut littérales
+        # "1.0"/"1" à chaque `generate`, écrasant le numéro de version/build réel.
+        CFBundleShortVersionString: "$(MARKETING_VERSION)"
+        CFBundleVersion: "$(CURRENT_PROJECT_VERSION)"
         NSAppTransportSecurity:
           NSAllowsArbitraryLoads: true
           NSAllowsArbitraryLoadsInWebContent: true
