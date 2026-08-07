@@ -1,2 +1,6 @@
 \.idea/
 .DS_Store
+
+# Xcode user-specific state (UI, breakpoints, schemes) — pas de valeur partagée
+xcuserdata/
+*.xcuserstate
