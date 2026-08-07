@@ -86,7 +86,7 @@ struct ConfigInstreamView: View {
                 VStack(alignment: .leading, spacing: 4) {
                     Text("Tag Param")
                         .font(.subheadline)
-                    TextField("facultatif — ex: monTag", text: $tagParam)
+                    TextField("facultatif", text: $tagParam)
                         .font(.footnote.monospaced())
                         .autocorrectionDisabled()
                         .textInputAutocapitalization(.never)
@@ -96,7 +96,7 @@ struct ConfigInstreamView: View {
                 VStack(alignment: .leading, spacing: 4) {
                     Text("Consent String")
                         .font(.subheadline)
-                    Picker("Consent String", selection: $consentStringEnabled) {
+                    Picker("Ajout d'une consent string valide", selection: $consentStringEnabled) {
                         Text("Oui").tag(true)
                         Text("Non").tag(false)
                     }

@@ -22,6 +22,7 @@ import androidx.compose.material.icons.filled.PlayArrow
 import androidx.compose.material.icons.filled.Settings
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
+import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
@@ -88,31 +89,10 @@ fun HomeScreen(navController: NavController) {
         )
         Spacer(modifier = Modifier.height(12.dp))
         HomeCard(
-            title = "Instream sans SDK",
-            subtitle = "Intégration WebView iframe Ultimedia",
+            title = "Player sans SDK",
+            subtitle = "Player chargé dans une webview Ultimedia",
             icon = Icons.Default.PlayArrow,
             onClick = { navController.navigate("nosdk") }
-        )
-        Spacer(modifier = Modifier.height(12.dp))
-        HomeCard(
-            title = "VideoFeed Carrousel",
-            subtitle = "Carrousel vidéo horizontal",
-            icon = Icons.Default.PlayArrow,
-            onClick = { navController.navigate("carrousel") }
-        )
-        Spacer(modifier = Modifier.height(12.dp))
-        HomeCard(
-            title = "VideoFeed Plein Écran",
-            subtitle = "Lecteur vertical style TikTok",
-            icon = Icons.Default.PlayArrow,
-            onClick = { launchVideoFeedActivity(context) }
-        )
-        Spacer(modifier = Modifier.height(12.dp))
-        HomeCard(
-            title = "Debug Cookies",
-            subtitle = "Gérer les cookies .ultimedia.com",
-            icon = Icons.Default.Build,
-            onClick = { navController.navigate("cookies") }
         )
         Spacer(modifier = Modifier.height(12.dp))
         HomeCard(
@@ -123,8 +103,33 @@ fun HomeScreen(navController: NavController) {
         )
         Spacer(modifier = Modifier.height(12.dp))
         HomeCard(
+            title = "Configuration Cookies",
+            subtitle = "Gestion des cookies ultimedia.com",
+            icon = Icons.Default.Settings,
+            onClick = { navController.navigate("cookies") }
+        )
+
+        Spacer(modifier = Modifier.height(24.dp))
+        HorizontalDivider(color = DigiCardBorder)
+        Spacer(modifier = Modifier.height(24.dp))
+
+        HomeCard(
+            title = "VideoFeed Carrousel",
+            subtitle = "Carrousel intégré dans une page",
+            icon = Icons.Default.PlayArrow,
+            onClick = { navController.navigate("carrousel") }
+        )
+        Spacer(modifier = Modifier.height(12.dp))
+        HomeCard(
+            title = "VideoFeed Plein Écran",
+            subtitle = "Feed vidéo en plein écran",
+            icon = Icons.Default.PlayArrow,
+            onClick = { launchVideoFeedActivity(context) }
+        )
+        Spacer(modifier = Modifier.height(12.dp))
+        HomeCard(
             title = "Configuration VideoFeed",
-            subtitle = "Paramètres MDTK, Zone, Ad Unit, Video ID...",
+            subtitle = "Paramètres du feed vidéo...",
             icon = Icons.Default.Settings,
             onClick = { navController.navigate("videofeed_config") }
         )

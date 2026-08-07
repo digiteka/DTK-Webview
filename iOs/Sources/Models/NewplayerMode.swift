@@ -10,10 +10,10 @@ enum NewplayerMode: String, CaseIterable, Identifiable {
 
     var label: String {
         switch self {
-        case .legacy: return "Player Legacy"
-        case .prod: return "Player 2026"
-        case .recette: return "Player 2026 : Amplify"
-        case .local: return "Player 2026 : Local"
+        case .legacy: return "Legacy"
+        case .prod: return "New"
+        case .recette: return "New : Amplify"
+        case .local: return "New : Local"
         }
     }
 

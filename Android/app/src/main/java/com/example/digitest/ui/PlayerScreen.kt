@@ -33,7 +33,9 @@ import com.example.digitest.DEFAULT_IS_SRC
 import com.example.digitest.DEFAULT_IS_URL_REFERRER
 import com.example.digitest.DEFAULT_IS_ZONE
 import com.example.digitest.InstreamPreferences
-import com.example.digitest.consent.ConsentManager
+import com.example.digitest.autoplayValueFor
+import com.example.digitest.effectiveConsentString
+import com.example.digitest.resolveNewplayer
 
 private const val NO_SDK_BASE_URL = "https://test-app.digiteka.com"
 
@@ -41,8 +43,8 @@ private const val NO_SDK_BASE_URL = "https://test-app.digiteka.com"
 fun NoSdkPlayerScreen() {
     val context = LocalContext.current
     val activity = context as Activity
-    val tcString = remember { ConsentManager.getTcString(context) ?: "" }
     val cfg = remember { InstreamPreferences.getNoSdkConfig(context) }
+    val tcString = remember { effectiveConsentString(cfg.consentStringEnabled) }
 
     val mdtk = cfg.mdtk ?: DEFAULT_IS_MDTK
     val zone = cfg.zone ?: DEFAULT_IS_ZONE
@@ -81,8 +83,14 @@ fun NoSdkPlayerScreen() {
             webViewClient = WebViewClient()
             webChromeClient = buildChromeClient(activity, fullscreenContainer)
 
+            val newplayer = resolveNewplayer(
+                cfg.newplayerMode,
+                cfg.newplayerBranchName ?: "",
+                cfg.newplayerLocalIP ?: ""
+            )
+            val autoplay = autoplayValueFor(InstreamPreferences.getSdkConfig(context).playMode)
             val iframeUrl = cfg.customUrl
-                ?: buildIframeUrl(tcString, mdtk, zone, src, urlReferrer, cfg.chromeless)
+                ?: buildIframeUrl(tcString, mdtk, zone, src, cfg.urlReferrer ?: "", cfg.chromeless, autoplay, cfg.tagParam, newplayer)
             loadDataWithBaseURL(NO_SDK_BASE_URL, buildArticleHtml(iframeUrl, urlReferrer), "text/html", "UTF-8", null)
         }
     }
@@ -231,21 +239,32 @@ private fun buildChromeClient(
     }
 }
 
-private fun buildIframeUrl(
+internal fun buildIframeUrl(
     tcString: String,
     mdtk: String,
     zone: String,
     src: String,
     urlReferrer: String,
-    chromeless: Boolean
-) = "https://www.ultimedia.com/deliver/generic/iframe" +
-    "/mdtk/$mdtk" +
-    "/zone/$zone" +
-    "/src/$src" +
-    "/showtitle/1" +
-    (if (chromeless) "/chromeless/1" else "") +
-    "/gdprconsentstring/$tcString" +
-    "/urlfacebook=${Uri.encode(urlReferrer)}"
+    chromeless: Boolean,
+    autoplay: Int?,
+    tagParam: String? = null,
+    newplayer: String? = null
+): String {
+    val queryParams = buildList {
+        if (tcString.isNotBlank()) add("gdprconsentstring=$tcString")
+        if (urlReferrer.isNotBlank()) add("urlfacebook=${Uri.encode(urlReferrer)}")
+        if (!newplayer.isNullOrBlank()) add("newplayer=${Uri.encode(newplayer)}")
+        if (!tagParam.isNullOrBlank()) add("tagparam=${Uri.encode(tagParam)}")
+    }
+    return "https://www.ultimedia.com/deliver/generic/iframe" +
+        "/mdtk/$mdtk" +
+        "/zone/$zone" +
+        "/src/$src" +
+        (if (autoplay != null) "/autoplay/$autoplay" else "") +
+        "/showtitle/1" +
+        (if (chromeless) "/chromeless/1" else "") +
+        (if (queryParams.isNotEmpty()) "?" + queryParams.joinToString("&") else "")
+}
 
 private fun buildArticleHtml(iframeUrl: String, canonicalUrl: String) = """
     <!doctype html><html>
