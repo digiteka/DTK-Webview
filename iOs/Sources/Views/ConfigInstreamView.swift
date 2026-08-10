@@ -10,6 +10,8 @@ struct ConfigInstreamView: View {
     @AppStorage("zone") private var zone = "3"
     @AppStorage("refererURL") private var refererURL = "https://www.ultimedia.com"
     @AppStorage("consentStringEnabled") private var consentStringEnabled = true
+    @AppStorage("triggerMode") private var triggerModeRaw = TriggerMode.none.rawValue
+    @AppStorage("chromeless") private var chromeless = false
     @AppStorage("newplayerMode") private var newplayerModeRaw = NewplayerMode.legacy.rawValue
     @AppStorage("newplayerBranchName") private var newplayerBranchName = ""
     @AppStorage("newplayerLocalIP") private var newplayerLocalIP = ""
@@ -18,6 +20,17 @@ struct ConfigInstreamView: View {
 
     private var consentString: String {
         consentStringEnabled ? Self.defaultConsentString : ""
+    }
+
+    private var triggerMode: TriggerMode {
+        TriggerMode(rawValue: triggerModeRaw) ?? .none
+    }
+
+    private var triggerModeBinding: Binding<TriggerMode> {
+        Binding(
+            get: { triggerMode },
+            set: { triggerModeRaw = $0.rawValue }
+        )
     }
 
     private var newplayerMode: NewplayerMode {
@@ -40,9 +53,10 @@ struct ConfigInstreamView: View {
             mdtk: mdtk.isEmpty ? "[MDTK]" : mdtk,
             zone: zone.isEmpty ? "[Zone]" : zone,
             src: src.isEmpty ? "[SRC]" : src,
-            autoplay: 1,
+            autoplay: triggerMode.autoplayValue,
             sound: 1,
             ad: 1,
+            chromeless: chromeless,
             newplayer: newplayer,
             refererURL: refererURL,
             tagParam: tagParam.isEmpty ? nil : tagParam,
@@ -94,9 +108,7 @@ struct ConfigInstreamView: View {
                 }
 
                 VStack(alignment: .leading, spacing: 4) {
-                    Text("Consent String")
-                        .font(.subheadline)
-                    Picker("Ajout d'une consent string valide", selection: $consentStringEnabled) {
+                    Picker("Consent String", selection: $consentStringEnabled) {
                         Text("Oui").tag(true)
                         Text("Non").tag(false)
                     }
@@ -104,10 +116,24 @@ struct ConfigInstreamView: View {
                 }
 
                 VStack(alignment: .leading, spacing: 4) {
-                    Text("Type de player")
-                        .font(.subheadline)
+                    Picker("Type de déclenchement", selection: triggerModeBinding) {
+                        ForEach(TriggerMode.allCases) { mode in
+                            Text(mode.label).tag(mode)
+                        }
+                    }
+                    .pickerStyle(.menu)
+                }
 
-                    Picker("Newplayer", selection: newplayerModeBinding) {
+                VStack(alignment: .leading, spacing: 4) {
+                    Picker("Chromeless", selection: $chromeless) {
+                        Text("Oui").tag(true)
+                        Text("Non").tag(false)
+                    }
+                    .pickerStyle(.menu)
+                }
+
+                VStack(alignment: .leading, spacing: 4) {
+                    Picker("Type de player", selection: newplayerModeBinding) {
                         ForEach(NewplayerMode.allCases) { mode in
                             Text(mode.label).tag(mode)
                         }
@@ -139,7 +165,7 @@ struct ConfigInstreamView: View {
             // ── Override manuel de l'URL du player ──────────────────────────
             Section {
                 VStack(alignment: .leading, spacing: 4) {
-                    Text("URL du player override (iOS 18+)")
+                    Text("URL du player override")
                         .font(.subheadline)
                     TextField(
                         "Remplacera les paramètres précédents",

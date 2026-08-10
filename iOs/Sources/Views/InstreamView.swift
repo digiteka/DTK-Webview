@@ -6,7 +6,8 @@ struct InstreamView: View {
     @AppStorage("mdtk") private var mdtk = "01211820"
     @AppStorage("src") private var src = "3v83mr3"
     @AppStorage("zone") private var zone = "3"
-    @AppStorage("autoplay") private var autoplay = 1
+    @AppStorage("triggerMode") private var triggerModeRaw = TriggerMode.none.rawValue
+    @AppStorage("chromeless") private var chromeless = false
     @AppStorage("sound") private var sound = 1
     @AppStorage("ad") private var ad = 1
     @AppStorage("refererURL") private var refererURL = "https://www.ultimedia.com"
@@ -23,6 +24,10 @@ struct InstreamView: View {
         consentStringEnabled ? ConfigInstreamView.defaultConsentString : ""
     }
 
+    private var triggerMode: TriggerMode {
+        TriggerMode(rawValue: triggerModeRaw) ?? .none
+    }
+
     private var newplayer: String? {
         (NewplayerMode(rawValue: newplayerModeRaw) ?? .legacy)
             .resolvedValue(branchName: newplayerBranchName, localIP: newplayerLocalIP)
@@ -33,9 +38,10 @@ struct InstreamView: View {
             mdtk: mdtk,
             zone: zone,
             src: src,
-            autoplay: autoplay,
+            autoplay: triggerMode.autoplayValue,
             sound: sound,
             ad: ad,
+            chromeless: chromeless,
             refererURL: refererURL,
             consentString: consentString,
             newplayer: newplayer,

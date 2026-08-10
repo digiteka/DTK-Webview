@@ -11,9 +11,10 @@ struct HTMLGenerator {
         mdtk: String,
         zone: String,
         src: String,
-        autoplay: Int,
+        autoplay: Int?,
         sound: Int,
         ad: Int,
+        chromeless: Bool = false,
         newplayer: String? = nil,
         refererURL: String,
         tagParam: String? = nil,
@@ -29,7 +30,12 @@ struct HTMLGenerator {
         url += "/zone/\(zone)"
         url += "/src/\(src)"
         url += "/showtitle/1"
-        url += "/autoplay/\(autoplay)"
+        if let autoplay {
+            url += "/autoplay/\(autoplay)"
+        }
+        if chromeless {
+            url += "/chromeless/1"
+        }
         url += "/sound/\(sound)"
         url += "/ad/\(ad)"
 
@@ -63,9 +69,10 @@ struct HTMLGenerator {
         mdtk: String,
         zone: String,
         src: String,
-        autoplay: Int,
+        autoplay: Int?,
         sound: Int,
         ad: Int,
+        chromeless: Bool = false,
         refererURL: String,
         consentString: String,
         newplayer: String? = nil,
@@ -79,6 +86,7 @@ struct HTMLGenerator {
             autoplay: autoplay,
             sound: sound,
             ad: ad,
+            chromeless: chromeless,
             newplayer: newplayer,
             refererURL: refererURL,
             tagParam: tagParam,
@@ -214,6 +222,35 @@ struct HTMLGenerator {
     /// Host servant launcher.min.js — bascule vers la preview Amplify de la branche VF_BRANCH si renseignée.
     static func videoFeedHost(vfBranch: String?) -> String {
         vfBranch.map { "\($0).d33gpayci0qt6k.amplifyapp.com" } ?? "videofeed.digiteka.com"
+    }
+
+    /// URL de la page VideoFeed plein écran — même format que la branche isMobileApp de
+    /// openVideofeed() (verticalvideos/src/launcher/_open.ts:59-97), mais avec videoFeedHost(vfBranch:)
+    /// à la place de videofeed_domain. Nécessaire car VideoFeedViewSUI (SDK fermé) charge en dur
+    /// videofeed.digiteka.com et n'expose aucun paramètre de branche.
+    static func videoFeedFullscreenURL(
+        mdtk: String,
+        videoId: String?,
+        zoneId: Int?,
+        vfBranch: String?,
+        consentString: String
+    ) -> URL? {
+        var components = URLComponents(string: "https://\(videoFeedHost(vfBranch: vfBranch))/")
+        var queryItems = [
+            URLQueryItem(name: "source", value: "carrousel"),
+            URLQueryItem(name: "mdtk", value: mdtk)
+        ]
+        if let videoId, !videoId.isEmpty {
+            queryItems.append(URLQueryItem(name: "video_id", value: videoId))
+        }
+        if let zoneId {
+            queryItems.append(URLQueryItem(name: "vf_zone_index", value: String(zoneId)))
+        }
+        if !consentString.isEmpty {
+            queryItems.append(URLQueryItem(name: "gdprconsentstring", value: consentString))
+        }
+        components?.queryItems = queryItems
+        return components?.url
     }
 
     /// Injecte les globals window.MDTK_* attendus par launcher.min.js — même mécanisme que l'asset

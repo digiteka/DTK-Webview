@@ -1,5 +1,4 @@
 import SwiftUI
-import VideoFeedSDK
 import WebKit
 
 struct VideoFeedCarrouselView: View {
@@ -51,13 +50,27 @@ struct VideoFeedCarrouselView: View {
         .navigationTitle("VideoFeed Carrousel")
         .navigationBarTitleDisplayMode(.inline)
         .fullScreenCover(isPresented: $showFullScreen) {
-            VideoFeedViewSUI(
-                videoId: fullScreenVideoId,
-                zoneId: fullScreenZoneId,
-                mdtk: mdtk,
-                adUnitPath: adunitPath.isEmpty ? nil : adunitPath,
-                showCloseButton: true
-            )
+            ZStack(alignment: .topTrailing) {
+                Color.black.ignoresSafeArea()
+                if let url = HTMLGenerator.videoFeedFullscreenURL(
+                    mdtk: mdtk,
+                    videoId: fullScreenVideoId,
+                    zoneId: fullScreenZoneId,
+                    vfBranch: vfBranch.isEmpty ? nil : vfBranch,
+                    consentString: UserDefaults.standard.string(forKey: "IABTCF_TCString") ?? ""
+                ) {
+                    VideoFeedFullscreenWebView(url: url)
+                        .ignoresSafeArea()
+                }
+                Button {
+                    showFullScreen = false
+                } label: {
+                    Image(systemName: "xmark.circle.fill")
+                        .font(.title)
+                        .foregroundStyle(.white, .black.opacity(0.6))
+                }
+                .padding()
+            }
         }
     }
 
@@ -68,6 +81,30 @@ struct VideoFeedCarrouselView: View {
 
     Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.
     """
+}
+
+// MARK: - Raw WKWebView plein écran (contourne VideoFeedViewSUI — SDK fermé, hardcode videofeed.digiteka.com
+// et n'expose aucun paramètre de branche — charge à la place videoFeedFullscreenURL, branch-aware)
+
+struct VideoFeedFullscreenWebView: UIViewRepresentable {
+    let url: URL
+
+    func makeUIView(context: Context) -> WKWebView {
+        let config = WKWebViewConfiguration()
+        config.allowsInlineMediaPlayback = true
+        config.mediaTypesRequiringUserActionForPlayback = []
+
+        let webView = WKWebView(frame: .zero, configuration: config)
+        webView.isOpaque = false
+        webView.backgroundColor = .black
+        if #available(iOS 16.4, *) {
+            webView.isInspectable = true
+        }
+        webView.load(URLRequest(url: url))
+        return webView
+    }
+
+    func updateUIView(_ webView: WKWebView, context: Context) {}
 }
 
 // MARK: - Raw WKWebView (contourne VideoFeedCarrouselViewSUI pour piloter les globals window.MDTK_*)
@@ -140,7 +177,8 @@ private struct CarrouselWebView: UIViewRepresentable {
         ) {
             guard let url = navigationAction.request.url,
                   let components = URLComponents(url: url, resolvingAgainstBaseURL: false),
-                  components.host == host,
+                  let navHost = components.host,
+                  navHost == host || navHost.hasSuffix(".amplifyapp.com"),
                   let mdtk = components.queryItems?.first(where: { $0.name == "mdtk" })?.value
             else {
                 decisionHandler(.allow)

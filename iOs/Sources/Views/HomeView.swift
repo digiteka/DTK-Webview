@@ -22,7 +22,7 @@ struct ContentView: View {
                         )
                     }
 
-                    NavigationLink(destination: CookieManagerView()) {
+                    NavigationLink(destination: ConfigCookieView()) {
                         ScenarioRow(
                             icon: "gearshape",
                             title: "Configuration Cookie",
@@ -40,7 +40,7 @@ struct ContentView: View {
                         )
                     }
 
-                    NavigationLink(destination: VideoFeedPleinEcranView()) {
+                    NavigationLink(destination: VideoFeedFullscreenView()) {
                         ScenarioRow(
                             icon: "arrow.up.left.and.arrow.down.right",
                             title: "VideoFeed Plein Ecran",

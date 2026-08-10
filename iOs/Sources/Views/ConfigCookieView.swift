@@ -4,7 +4,7 @@ import WebKit
 private let cookieDomain = "www.ultimedia.com"
 private let cookieDomainMatch = "ultimedia.com"
 
-struct CookieManagerView: View {
+struct ConfigCookieView: View {
     // Mêmes clés @AppStorage que ConfigInstreamView — l'URL d'injection réutilise exactement le
     // même endpoint iframe déjà prouvé joignable, plutôt que la racine du domaine (jamais testée).
     @AppStorage("mdtk") private var mdtk = "01211820"
