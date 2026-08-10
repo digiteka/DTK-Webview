@@ -3,3 +3,6 @@ pre-commit:
     bump-ios-build-number:
       glob: "iOs/**"
       run: bash iOs/Scripts/bump_ios_build_number.sh
+    bump-android-build-number:
+      glob: "Android/**"
+      run: bash Android/Scripts/bump_android_build_number.sh

@@ -1,5 +1,7 @@
 package com.example.digitest.ui
 
+import android.content.Context
+import android.os.Build
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
@@ -31,6 +33,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.vector.ImageVector
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
@@ -44,6 +47,8 @@ import com.example.digitest.ui.theme.DigiTextSecondary
 
 @Composable
 fun HomeScreen(navController: NavController) {
+    val context = LocalContext.current
+
     Column(
         modifier = Modifier
             .fillMaxSize()
@@ -128,7 +133,28 @@ fun HomeScreen(navController: NavController) {
         )
 
         Spacer(modifier = Modifier.height(32.dp))
+
+        Text(
+            text = appVersion(context),
+            style = MaterialTheme.typography.labelSmall,
+            color = DigiTextSecondary
+        )
+
+        Spacer(modifier = Modifier.height(16.dp))
     }
+}
+
+// versionCode / versionName dans app/build.gradle.kts, bumpé automatiquement en pre-commit
+// (Android/Scripts/bump_android_build_number.sh) — équivalent CURRENT_PROJECT_VERSION côté iOS.
+private fun appVersion(context: Context): String {
+    val packageInfo = context.packageManager.getPackageInfo(context.packageName, 0)
+    val versionCode = if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.P) {
+        packageInfo.longVersionCode
+    } else {
+        @Suppress("DEPRECATION")
+        packageInfo.versionCode.toLong()
+    }
+    return "v${packageInfo.versionName} ($versionCode)"
 }
 
 @Composable
