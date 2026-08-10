@@ -1,6 +1,5 @@
 package com.example.digitest.ui
 
-import android.content.Context
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
@@ -32,16 +31,12 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.vector.ImageVector
-import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.navigation.NavController
-import com.digiteka.videofeed.ui.VideoFeedActivity
-import com.example.digitest.DEFAULT_VF_MDTK
 import com.example.digitest.R
-import com.example.digitest.VideoFeedPreferences
 import com.example.digitest.ui.theme.DigiBlue
 import com.example.digitest.ui.theme.DigiCard
 import com.example.digitest.ui.theme.DigiCardBorder
@@ -49,8 +44,6 @@ import com.example.digitest.ui.theme.DigiTextSecondary
 
 @Composable
 fun HomeScreen(navController: NavController) {
-    val context = LocalContext.current
-
     Column(
         modifier = Modifier
             .fillMaxSize()
@@ -124,7 +117,7 @@ fun HomeScreen(navController: NavController) {
             title = "VideoFeed Plein Écran",
             subtitle = "Feed vidéo en plein écran",
             icon = Icons.Default.PlayArrow,
-            onClick = { launchVideoFeedActivity(context) }
+            onClick = { navController.navigate("videofeed_fullscreen") }
         )
         Spacer(modifier = Modifier.height(12.dp))
         HomeCard(
@@ -203,17 +196,4 @@ private fun HomeCard(
             )
         }
     }
-}
-
-private fun launchVideoFeedActivity(context: Context) {
-    val config = VideoFeedPreferences.getConfig(context)
-    context.startActivity(
-        VideoFeedActivity.newInstance(
-            context = context,
-            mdtk = config.mdtk ?: DEFAULT_VF_MDTK,
-            videoId = config.videoId,
-            adUnitPath = config.adUnitPath,
-            zoneId = config.zoneId
-        )
-    )
 }

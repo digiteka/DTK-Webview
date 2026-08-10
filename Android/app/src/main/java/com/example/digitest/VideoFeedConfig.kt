@@ -1,6 +1,7 @@
 package com.example.digitest
 
 import android.content.Context
+import android.net.Uri
 
 private const val PREFS_NAME = "videofeed_prefs"
 private const val KEY_MDTK = "vf_mdtk"
@@ -10,9 +11,36 @@ private const val KEY_VIDEO_ID = "vf_video_id"
 private const val KEY_CARROUSEL_HEIGHT_VH = "vf_carrousel_height_vh"
 private const val KEY_VF_BRANCH = "vf_branch"
 private const val KEY_CARR_BRANCH = "carr_branch"
+private const val VF_AMPLIFY_APP_ID = "d33gpayci0qt6k"
 
 const val DEFAULT_VF_MDTK = "01573101"
 const val DEFAULT_VF_CARROUSEL_HEIGHT_VH = "95"
+
+/** Host servant le VideoFeed — bascule vers la preview Amplify de la branche VF_BRANCH si renseignée. */
+fun videoFeedHost(vfBranch: String?): String =
+    vfBranch?.let { "$it.$VF_AMPLIFY_APP_ID.amplifyapp.com" } ?: "videofeed.digiteka.com"
+
+/**
+ * URL de la page VideoFeed plein écran — même format que la branche isMobileApp de
+ * openVideofeed() (verticalvideos/src/launcher/_open.ts:59-97), mais avec videoFeedHost()
+ * à la place de videofeed_domain. Nécessaire car VideoFeedActivity (SDK fermé) charge en dur
+ * videofeed.digiteka.com et n'expose aucun paramètre de branche.
+ */
+fun videoFeedFullscreenUrl(
+    mdtk: String,
+    videoId: String?,
+    zoneId: String?,
+    vfBranch: String?,
+    consentString: String?
+): String {
+    val builder = Uri.parse("https://${videoFeedHost(vfBranch)}/").buildUpon()
+        .appendQueryParameter("source", "carrousel")
+        .appendQueryParameter("mdtk", mdtk)
+    if (!videoId.isNullOrEmpty()) builder.appendQueryParameter("video_id", videoId)
+    if (!zoneId.isNullOrEmpty()) builder.appendQueryParameter("vf_zone_index", zoneId)
+    if (!consentString.isNullOrEmpty()) builder.appendQueryParameter("gdprconsentstring", consentString)
+    return builder.build().toString()
+}
 
 data class VideoFeedConfig(
     val mdtk: String?,

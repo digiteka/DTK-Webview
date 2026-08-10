@@ -21,6 +21,7 @@ import com.example.digitest.ui.InstreamArticleScreen
 import com.example.digitest.ui.InstreamConfigScreen
 import com.example.digitest.ui.NoSdkPlayerScreen
 import com.example.digitest.ui.VideoFeedConfigScreen
+import com.example.digitest.ui.VideoFeedFullscreenScreen
 import com.example.digitest.ui.theme.DIGITESTTheme
 
 class MainActivity : ComponentActivity() {
@@ -51,6 +52,7 @@ class MainActivity : ComponentActivity() {
                             composable("instream") { InstreamArticleScreen() }
                             composable("carrousel") { CarrouselScreen() }
                             composable("videofeed_config") { VideoFeedConfigScreen() }
+                            composable("videofeed_fullscreen") { VideoFeedFullscreenScreen() }
                             composable("nosdk") { NoSdkPlayerScreen() }
                             composable("instream_config") { InstreamConfigScreen() }
                             composable("cookies") { CookieManagerScreen() }
