@@ -1,8 +1,22 @@
 <!DOCTYPE html>
-<html>
+<html lang="fr">
+
 <head>
-    <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-    <script defer src="https://videofeed.digiteka.com/launcher.min.js"></script>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <style>
+        body {
+            background-color: transparent;
+        }
+
+        #dtk-videofeed-carrousel {
+            background-color: transparent;
+        }
+    </style>
+</head>
+
+<body>
+    <div id="dtk-videofeed-carrousel"></div>
     <script type="text/javascript">
         window.MDTK_videofeed = "${mdtk}";
         window.MDTK_videofeed_gdprconsentstring = "${consentString}";
@@ -12,17 +26,16 @@
         window.MDTK_videofeed_zone_index = "${zoneId}";
         window.MDTK_VF_BRANCH = "${vfBranch}";
         window.MDTK_CARR_BRANCH = "${carrBranch}";
+
+        const branchValue = typeof window.MDTK_VF_BRANCH === 'string' ? window.MDTK_VF_BRANCH : null;
+        const videofeed_domain = branchValue ? `//${branchValue}.d33gpayci0qt6k.amplifyapp.com` : '//videofeed.digiteka.com';
+        const source = videofeed_domain + '/launcher.min.js';
+
+        const scriptElement = document.createElement('script');
+        scriptElement.async = true;
+        scriptElement.src = source;
+        document.body.appendChild(scriptElement);
     </script>
-    <style>
-        body {
-            background-color: transparent;
-        }
-        #dtk-videofeed-carrousel {
-            background-color: transparent;
-        }
-    </style>
-</head>
-<body>
-<div id="dtk-videofeed-carrousel"></div>
 </body>
+
 </html>
