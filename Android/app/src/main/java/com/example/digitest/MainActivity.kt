@@ -10,9 +10,11 @@ import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
+import androidx.navigation.NavType
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
+import androidx.navigation.navArgument
 import com.example.digitest.consent.ConsentManager
 import com.example.digitest.ui.CarrouselScreen
 import com.example.digitest.ui.CookieManagerScreen
@@ -20,6 +22,7 @@ import com.example.digitest.ui.HomeScreen
 import com.example.digitest.ui.InstreamArticleScreen
 import com.example.digitest.ui.InstreamConfigScreen
 import com.example.digitest.ui.NoSdkPlayerScreen
+import com.example.digitest.ui.VideoFeedCarrouselFullscreenScreen
 import com.example.digitest.ui.VideoFeedConfigScreen
 import com.example.digitest.ui.VideoFeedFullscreenScreen
 import com.example.digitest.ui.theme.DIGITESTTheme
@@ -50,9 +53,23 @@ class MainActivity : ComponentActivity() {
                         ) {
                             composable("home") { HomeScreen(navController) }
                             composable("instream") { InstreamArticleScreen() }
-                            composable("carrousel") { CarrouselScreen() }
+                            composable("carrousel") { CarrouselScreen(navController) }
                             composable("videofeed_config") { VideoFeedConfigScreen() }
                             composable("videofeed_fullscreen") { VideoFeedFullscreenScreen() }
+                            composable(
+                                "videofeed_carrousel_fullscreen?slide_infos={slide_infos}",
+                                arguments = listOf(
+                                    navArgument("slide_infos") {
+                                        type = NavType.StringType
+                                        nullable = true
+                                        defaultValue = null
+                                    }
+                                )
+                            ) { backStackEntry ->
+                                VideoFeedCarrouselFullscreenScreen(
+                                    backStackEntry.arguments?.getString("slide_infos")
+                                )
+                            }
                             composable("nosdk") { NoSdkPlayerScreen() }
                             composable("instream_config") { InstreamConfigScreen() }
                             composable("cookies") { CookieManagerScreen() }

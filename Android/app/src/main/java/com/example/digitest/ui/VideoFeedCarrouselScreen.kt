@@ -1,14 +1,20 @@
 package com.example.digitest.ui
 
+import android.app.Activity
+import android.net.Uri
 import android.net.http.SslError
+import android.util.Log
 import android.view.ViewGroup
 import android.view.ViewTreeObserver
+import android.webkit.JavascriptInterface
 import android.webkit.SslErrorHandler
 import android.webkit.WebResourceError
 import android.webkit.WebResourceRequest
 import android.webkit.WebResourceResponse
+import android.webkit.WebSettings
 import android.webkit.WebView
 import android.webkit.WebViewClient
+import android.widget.FrameLayout
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
@@ -27,6 +33,7 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.viewinterop.AndroidView
+import androidx.navigation.NavController
 import com.digiteka.videofeed.ui.VideoFeedActivity
 import com.digiteka.videofeed.ui.carousel.VideoFeedCarousel
 import com.example.digitest.DEFAULT_VF_CARROUSEL_HEIGHT_VH
@@ -35,11 +42,14 @@ import com.example.digitest.VideoFeedPreferences
 import com.example.digitest.consent.ConsentManager
 import com.example.digitest.utils.destroyWebViewsRecursively
 import com.example.digitest.utils.enableThirdPartyCookiesRecursively
+import com.example.digitest.videoFeedFullscreenUrl
+import org.json.JSONObject
 import java.io.ByteArrayInputStream
 
 @Composable
-fun CarrouselScreen() {
+fun CarrouselScreen(navController: NavController) {
     val context = LocalContext.current
+    val activity = context as Activity
     val config = remember { VideoFeedPreferences.getConfig(context) }
     val carrouselView = remember {
         VideoFeedCarousel(context).also {
@@ -47,6 +57,18 @@ fun CarrouselScreen() {
                 ViewGroup.LayoutParams.MATCH_PARENT,
                 ViewGroup.LayoutParams.MATCH_PARENT
             )
+
+            // Pont JS -> natif : la page (video_feed_carrousel.html) émet un window.postMessage
+            // "openFromCarrousel" au clic sur une vignette. Si VF_BRANCH est renseigné, on ouvre
+            // nous-mêmes VideoFeedFullscreenScreen (branch-aware) plutôt que de compter sur
+            // l'interception réseau ci-dessous (previewVideofeedHost, qui n'attrape que les
+            // VF_BRANCH déjà au format host Amplify complet).
+            if (!config.vfBranch.isNullOrBlank()) {
+                it.addJavascriptInterface(
+                    OpenFromCarrouselBridge(activity, navController),
+                    "AndroidVfBridge"
+                )
+            }
             // Le SDK de prod n'expose ni placeholder ni API publique pour MDTK_carrousel_height
             // (en dur à "95vh" dans son propre template) : on reconstruit le HTML nous-mêmes,
             // à partir du même asset "video_feed_carrousel.html" livré par le SDK, pour pouvoir
@@ -159,6 +181,78 @@ fun CarrouselScreen() {
                 modifier = Modifier.padding(horizontal = 16.dp, vertical = 8.dp)
             )
         }
+    }
+}
+
+/**
+ * Reçoit le postMessage "openFromCarrousel" (émis par video_feed_carrousel.html au clic sur une
+ * vignette, avec les infos de la vidéo cliquée en slideInfos) et ouvre
+ * VideoFeedCarrouselFullscreenScreen avec ces infos. Les méthodes @JavascriptInterface s'exécutent
+ * sur un thread WebView, pas le thread UI — d'où le runOnUiThread avant tout appel navController.
+ */
+private class OpenFromCarrouselBridge(
+    private val activity: Activity,
+    private val navController: NavController
+) {
+    @JavascriptInterface
+    fun openFromCarrousel(slideInfosJson: String) {
+        activity.runOnUiThread {
+            navController.navigate(
+                "videofeed_carrousel_fullscreen?slide_infos=${Uri.encode(slideInfosJson)}"
+            )
+        }
+    }
+}
+
+/**
+ * À l'instar de VideoFeedFullscreenScreen() — WebView attachée directement au decorView (pas de
+ * padding Scaffold) — mais construite depuis les slideInfos du clic carrousel plutôt que depuis la
+ * config statique, et avec le paramètre "source=carrousel" dans l'url.
+ */
+@Composable
+fun VideoFeedCarrouselFullscreenScreen(slideInfosJson: String?) {
+    val context = LocalContext.current
+    val activity = context as Activity
+    val config = remember { VideoFeedPreferences.getConfig(context) }
+    val videoId = remember(slideInfosJson) {
+        slideInfosJson
+            ?.let { runCatching { JSONObject(it).optString("id", "") }.getOrNull() }
+            ?.takeIf { it.isNotBlank() }
+    }
+
+    val webView = remember {
+        WebView(context).apply {
+            settings.apply {
+                javaScriptEnabled = true
+                @Suppress("SetJavaScriptEnabled")
+                javaScriptCanOpenWindowsAutomatically = true
+                useWideViewPort = true
+                loadWithOverviewMode = true
+                domStorageEnabled = true
+                mediaPlaybackRequiresUserGesture = false
+                cacheMode = WebSettings.LOAD_NO_CACHE
+            }
+            webViewClient = WebViewClient()
+            loadUrl(
+                videoFeedFullscreenUrl(
+                    mdtk = config.mdtk ?: DEFAULT_VF_MDTK,
+                    videoId = videoId ?: config.videoId,
+                    zoneId = config.zoneId,
+                    vfBranch = config.vfBranch,
+                    consentString = ConsentManager.getTcString(context),
+                    source = "carrousel"
+                )
+            )
+        }
+    }
+
+    DisposableEffect(webView) {
+        val decorView = activity.window.decorView as FrameLayout
+        decorView.addView(
+            webView,
+            FrameLayout.LayoutParams(FrameLayout.LayoutParams.MATCH_PARENT, FrameLayout.LayoutParams.MATCH_PARENT)
+        )
+        onDispose { decorView.removeView(webView) }
     }
 }
 

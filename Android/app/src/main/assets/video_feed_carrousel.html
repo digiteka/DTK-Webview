@@ -27,6 +27,17 @@
         window.MDTK_VF_BRANCH = "${vfBranch}";
         window.MDTK_CARR_BRANCH = "${carrBranch}";
 
+        window.addEventListener('message', function (event) {
+            if (
+                event.data &&
+                event.data.videofeed === true &&
+                event.data.action === 'openFromCarrousel' &&
+                window.AndroidVfBridge
+            ) {
+                window.AndroidVfBridge.openFromCarrousel(JSON.stringify(event.data.slideInfos || {}));
+            }
+        });
+
         const branchValue = typeof window.MDTK_VF_BRANCH === 'string' ? window.MDTK_VF_BRANCH : null;
         const videofeed_domain = branchValue ? `//${branchValue}.d33gpayci0qt6k.amplifyapp.com` : '//videofeed.digiteka.com';
         const source = videofeed_domain + '/launcher.min.js';

@@ -2,6 +2,7 @@ package com.example.digitest
 
 import android.content.Context
 import android.net.Uri
+import android.util.Log
 
 private const val PREFS_NAME = "videofeed_prefs"
 private const val KEY_MDTK = "vf_mdtk"
@@ -31,14 +32,15 @@ fun videoFeedFullscreenUrl(
     videoId: String?,
     zoneId: String?,
     vfBranch: String?,
-    consentString: String?
+    consentString: String?,
+    source: String? = null
 ): String {
     val builder = Uri.parse("https://${videoFeedHost(vfBranch)}/").buildUpon()
-        .appendQueryParameter("source", "carrousel")
         .appendQueryParameter("mdtk", mdtk)
     if (!videoId.isNullOrEmpty()) builder.appendQueryParameter("video_id", videoId)
     if (!zoneId.isNullOrEmpty()) builder.appendQueryParameter("vf_zone_index", zoneId)
     if (!consentString.isNullOrEmpty()) builder.appendQueryParameter("gdprconsentstring", consentString)
+    if (!source.isNullOrEmpty()) builder.appendQueryParameter("source", source)
     return builder.build().toString()
 }
 
