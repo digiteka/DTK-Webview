@@ -5,7 +5,7 @@ struct ConfigVideoFeedView: View {
     @AppStorage("videoFeedZoneId") private var zoneId = 0
     @AppStorage("videoFeedAdunitPath") private var adunitPath = ""
     @AppStorage("videoFeedVideoId") private var videoId = ""
-    @AppStorage("videoFeedCarrouselHeightVh") private var carrouselHeightVh = 95
+    @AppStorage("videoFeedCarrouselHeight") private var carrouselHeight = 280
     @AppStorage("videoFeedVfBranch") private var vfBranch = ""
     @AppStorage("videoFeedCarrBranch") private var carrBranch = ""
 
@@ -16,10 +16,10 @@ struct ConfigVideoFeedView: View {
         )
     }
 
-    private var carrouselHeightVhText: Binding<String> {
+    private var carrouselHeightText: Binding<String> {
         Binding(
-            get: { String(carrouselHeightVh) },
-            set: { carrouselHeightVh = Int($0) ?? 0 }
+            get: { String(carrouselHeight) },
+            set: { carrouselHeight = Int($0) ?? 0 }
         )
     }
 
@@ -32,45 +32,51 @@ struct ConfigVideoFeedView: View {
                         .autocorrectionDisabled()
                         .textInputAutocapitalization(.never)
                 }
+
                 LabeledRow("Zone ID") {
                     TextField("ex: 3", text: zoneIdText)
                         .multilineTextAlignment(.trailing)
                         .keyboardType(.numberPad)
                 }
+
                 VStack(alignment: .leading, spacing: 4) {
                     Text("Adunit Path")
                         .font(.subheadline)
-                    TextField("facultatif — ex: /1234/adunit/path", text: $adunitPath)
+                    TextField("ex: /1234/adunit/path", text: $adunitPath)
                         .font(.footnote.monospaced())
                         .autocorrectionDisabled()
                         .textInputAutocapitalization(.never)
                         .foregroundStyle(adunitPath.isEmpty ? .secondary : .primary)
                 }
+
                 LabeledRow("Video ID") {
-                    TextField("facultatif — ex: 3v83mr3", text: $videoId)
+                    TextField("ex: 3v83mr3", text: $videoId)
                         .multilineTextAlignment(.trailing)
                         .autocorrectionDisabled()
                         .textInputAutocapitalization(.never)
                 }
-                LabeledRow("Hauteur du carrousel (vh)") {
-                    TextField("ex: 95", text: carrouselHeightVhText)
+
+                LabeledRow("Hauteur du carrousel (px)") {
+                    TextField("", text: carrouselHeightText)
                         .multilineTextAlignment(.trailing)
                         .keyboardType(.numberPad)
                 }
+                
                 VStack(alignment: .leading, spacing: 4) {
                     Text("VF_BRANCH")
                         .font(.subheadline)
-                    TextField("facultatif — ex: local ou SUP-123", text: $vfBranch)
+                    TextField("ex: local ou SUP-123", text: $vfBranch)
                         .font(.footnote.monospaced())
                         .autocorrectionDisabled()
                         .textInputAutocapitalization(.never)
                         .keyboardType(.numbersAndPunctuation)
                         .foregroundStyle(vfBranch.isEmpty ? .secondary : .primary)
                 }
+
                 VStack(alignment: .leading, spacing: 4) {
                     Text("CARR_BRANCH")
                         .font(.subheadline)
-                    TextField("facultatif — ex: local ou SUP-123", text: $carrBranch)
+                    TextField("ex: local ou SUP-123", text: $carrBranch)
                         .font(.footnote.monospaced())
                         .autocorrectionDisabled()
                         .textInputAutocapitalization(.never)

@@ -7,6 +7,7 @@ struct VideoFeedCarrouselView: View {
     @AppStorage("videoFeedAdunitPath") private var adunitPath = ""
     @AppStorage("videoFeedVfBranch") private var vfBranch = ""
     @AppStorage("videoFeedCarrBranch") private var carrBranch = ""
+    @AppStorage("videoFeedCarrouselHeight") private var carrouselHeight = 280
     @State private var fullScreenVideoId: String?
     @State private var fullScreenZoneId: Int?
     @State private var showFullScreen = false
@@ -31,7 +32,7 @@ struct VideoFeedCarrouselView: View {
                     fullScreenZoneId = tappedZoneId
                     showFullScreen = true
                 }
-                .frame(height: 280)
+                .frame(height: CGFloat(carrouselHeight))
                 .background(Color.black)
 
                 Text("Intégration VideoFeed")

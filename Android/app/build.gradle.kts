@@ -15,7 +15,7 @@ android {
         applicationId = "com.example.digitest"
         minSdk = 24
         targetSdk = 35
-        versionCode = 2
+        versionCode = 3
         versionName = "1.0"
 
         testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
@@ -36,6 +36,16 @@ android {
     }
     buildFeatures {
         compose = true
+    }
+}
+
+androidComponents {
+    onVariants(selector().all()) { variant ->
+        variant.outputs.forEach { output ->
+            output.outputFileName.set(
+                "app-${variant.buildType}-${output.versionName.get()}-${output.versionCode.get()}.apk"
+            )
+        }
     }
 }
 
