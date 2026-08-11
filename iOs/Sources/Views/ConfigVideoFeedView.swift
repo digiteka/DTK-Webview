@@ -61,11 +61,15 @@ struct ConfigVideoFeedView: View {
                         .multilineTextAlignment(.trailing)
                         .keyboardType(.numberPad)
                 }
-                
+            } header: {
+                Text("Configuration")
+            }
+
+            Section {
                 VStack(alignment: .leading, spacing: 4) {
                     Text("VF_BRANCH")
                         .font(.subheadline)
-                    TextField("ex: local ou SUP-123", text: $vfBranch)
+                    TextField("ex: local, SUP-123...", text: $vfBranch)
                         .font(.footnote.monospaced())
                         .autocorrectionDisabled()
                         .textInputAutocapitalization(.never)
@@ -76,7 +80,7 @@ struct ConfigVideoFeedView: View {
                 VStack(alignment: .leading, spacing: 4) {
                     Text("CARR_BRANCH")
                         .font(.subheadline)
-                    TextField("ex: local ou SUP-123", text: $carrBranch)
+                    TextField("ex: local, SUP-123...", text: $carrBranch)
                         .font(.footnote.monospaced())
                         .autocorrectionDisabled()
                         .textInputAutocapitalization(.never)
@@ -84,7 +88,7 @@ struct ConfigVideoFeedView: View {
                         .foregroundStyle(carrBranch.isEmpty ? .secondary : .primary)
                 }
             } header: {
-                Text("Configuration")
+                Text("Branches Amplify")
             }
         }
         .navigationTitle("Configuration VideoFeed")
