@@ -37,6 +37,7 @@ fun videoFeedFullscreenUrl(
 ): String {
     val builder = Uri.parse("https://${videoFeedHost(vfBranch)}/").buildUpon()
         .appendQueryParameter("mdtk", mdtk)
+        .appendQueryParameter("debug", "1")
     if (!videoId.isNullOrEmpty()) builder.appendQueryParameter("video_id", videoId)
     if (!zoneId.isNullOrEmpty()) builder.appendQueryParameter("vf_zone_index", zoneId)
     if (!consentString.isNullOrEmpty()) builder.appendQueryParameter("gdprconsentstring", consentString)

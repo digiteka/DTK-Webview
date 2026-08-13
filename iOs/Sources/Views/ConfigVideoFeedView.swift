@@ -1,6 +1,8 @@
 import SwiftUI
 
 struct ConfigVideoFeedView: View {
+    static let defaultConsentString = "CQlo8kAQlo8kAAHABBENCiFsAP_gAEPgAAAALAEB7C_cRSFicSZn4LsgSQxewUhCoMAhBAIIACwBiAIAJJwG1mECIAjAgCAKABIAICRAAQAlCADABAAAAIABITCEIEAQARAAIqBAAAARQgIACAhAGQAAGAAQgMJUAgEAkAMECBqoQFhAAQAgigAQIAAlAICFAAAAAAAgQAAAIAAAAmwQEgAAcAIAEAAAAFEMAAAAoAECAAAAEAAQAAAAQBAAAAAAAAAgAQAIgAQAAAAABBYAgPYX7iKQsTiQI_BdkASGL2CkAVBgEIIBBAASAMQBABJGAWswgRAEQAAQBAAIABASIAAAEIAAIAIAAABAAJCIQgAgCACIAABQIAAACKEAAAAEIASAAAwACEBhKgAAgEAAggANUCAsAACAEEUAABAAAoBAQgAAAAAAECAAABAAAAEyAAkAADgBAAgAAAAIhgAAAFAAAQAAAAgACAAAACAAAAAAAAAAEAAABEACAAAAAAIAwSADAAEGSB0AGAAIMkEIAMAAQZIJQAYAAgyQUgAwABBkgtABgACDJAAA.ILAEB7C_cRSFicSZn4LsgSQxewUhCoMAhBAIIACwBiAIAJJwG1mECIAjAgCAKABIAICRAAQAlCADABAAAAIABITCEIEAQARAAIqBAAAARQgIACAhAGQAAGAAQgMJUAgEAkAMECBqoQFhAAQAgigAQIAAlAICFAAAAAAAgQAAAIAAAAmwQEgAAcAIAEAAAAFEMAAAAoAECAAAAEAAQAAAAQBAAAAAAAAAgAQAIgAQAAAAABAA.f_wAH_wAAAAA"
+
     @AppStorage("videoFeedMdtk") private var mdtk = "01573101"
     @AppStorage("videoFeedZoneId") private var zoneId = 0
     @AppStorage("videoFeedAdunitPath") private var adunitPath = ""
@@ -8,6 +10,11 @@ struct ConfigVideoFeedView: View {
     @AppStorage("videoFeedCarrouselHeight") private var carrouselHeight = 280
     @AppStorage("videoFeedVfBranch") private var vfBranch = ""
     @AppStorage("videoFeedCarrBranch") private var carrBranch = ""
+    @AppStorage("videoFeedConsentStringEnabled") private var consentStringEnabled = true
+
+    private var consentString: String? {
+        consentStringEnabled ? Self.defaultConsentString : nil
+    }
 
     private var zoneIdText: Binding<String> {
         Binding(
@@ -60,6 +67,14 @@ struct ConfigVideoFeedView: View {
                     TextField("", text: carrouselHeightText)
                         .multilineTextAlignment(.trailing)
                         .keyboardType(.numberPad)
+                }
+
+                VStack(alignment: .leading, spacing: 4) {
+                    Picker("Consent String", selection: $consentStringEnabled) {
+                        Text("Oui").tag(true)
+                        Text("Non").tag(false)
+                    }
+                    .pickerStyle(.menu)
                 }
             } header: {
                 Text("Configuration")

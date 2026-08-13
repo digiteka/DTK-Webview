@@ -275,7 +275,6 @@ struct HTMLGenerator {
             <script defer src="https://\(launcherHost)/launcher.min.js"></script>
             <script type="text/javascript">
                 window.MDTK_videofeed = "\(mdtk)";
-                window.MDTK_videofeed_gdprconsentstring = "\(consentString)";
                 window.MDTK_carrousel_height = "95vh";
                 window.MDTK_carrousel_fromsdk = true;
                 window.MDTK_videofeed_adunit_path = "\(adUnitPath ?? "")";

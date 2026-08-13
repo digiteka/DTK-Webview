@@ -8,14 +8,19 @@ struct VideoFeedCarrouselView: View {
     @AppStorage("videoFeedVfBranch") private var vfBranch = ""
     @AppStorage("videoFeedCarrBranch") private var carrBranch = ""
     @AppStorage("videoFeedCarrouselHeight") private var carrouselHeight = 280
+    @AppStorage("videoFeedConsentStringEnabled") private var consentStringEnabled = true
     @State private var fullScreenVideoId: String?
     @State private var fullScreenZoneId: Int?
     @State private var showFullScreen = false
 
+    private var debugConsentString: String? {
+        consentStringEnabled ? ConfigVideoFeedView.defaultConsentString : nil
+    }
+
     private var html: String {
         HTMLGenerator.generateVideoFeedCarrousel(
             mdtk: mdtk,
-            consentString: UserDefaults.standard.string(forKey: "IABTCF_TCString") ?? "",
+            consentString: debugConsentString ?? "",
             adUnitPath: adunitPath.isEmpty ? nil : adunitPath,
             zoneId: zoneId == 0 ? nil : zoneId,
             vfBranch: vfBranch.isEmpty ? nil : vfBranch,
@@ -58,9 +63,9 @@ struct VideoFeedCarrouselView: View {
                     videoId: fullScreenVideoId,
                     zoneId: fullScreenZoneId,
                     vfBranch: vfBranch.isEmpty ? nil : vfBranch,
-                    consentString: UserDefaults.standard.string(forKey: "IABTCF_TCString") ?? ""
+                    consentString: debugConsentString ?? ""
                 ) {
-                    VideoFeedFullscreenWebView(url: url)
+                    VideoFeedFullscreenWebView(url: url, consentString: debugConsentString)
                         .ignoresSafeArea()
                 }
                 Button {
@@ -89,6 +94,7 @@ struct VideoFeedCarrouselView: View {
 
 struct VideoFeedFullscreenWebView: UIViewRepresentable {
     let url: URL
+    let consentString: String?
 
     func makeUIView(context: Context) -> WKWebView {
         let config = WKWebViewConfiguration()
@@ -101,7 +107,11 @@ struct VideoFeedFullscreenWebView: UIViewRepresentable {
         if #available(iOS 16.4, *) {
             webView.isInspectable = true
         }
-        webView.load(URLRequest(url: url))
+        var components = URLComponents(url: url, resolvingAgainstBaseURL: false)
+        var queryItems = components?.queryItems ?? []
+        queryItems.append(URLQueryItem(name: "debug", value: "1"))
+        components?.queryItems = queryItems
+        webView.load(URLRequest(url: components?.url ?? url))
         return webView
     }
 
@@ -133,7 +143,6 @@ private struct CarrouselWebView: UIViewRepresentable {
         let config = WKWebViewConfiguration()
         config.allowsInlineMediaPlayback = true
         config.mediaTypesRequiringUserActionForPlayback = []
-        config.requiresUserActionForMediaPlayback = false
 
         let webView = WKWebView(frame: .zero, configuration: config)
         webView.navigationDelegate = context.coordinator
