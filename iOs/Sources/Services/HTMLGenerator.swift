@@ -231,7 +231,7 @@ struct HTMLGenerator {
         }
         if vfBranch.hasPrefix(recetteBranchPrefix) {
             let branch = vfBranch.dropFirst(recetteBranchPrefix.count)
-            return "\(branch).d33gpayci0qt6k.amplifyapp.com"
+            return String(branch)
         }
         return "videofeed.digiteka.com"
     }
@@ -241,7 +241,7 @@ struct HTMLGenerator {
         guard let carrBranch, !carrBranch.isEmpty else { return "carrousel.digiteka.com" }
         if carrBranch.hasPrefix(localBranchPrefix) {
             let host = carrBranch.dropFirst(localBranchPrefix.count)
-            return host.isEmpty ? "local" : String(host)
+            return host.isEmpty ? "192.168.1.136:5174" : String(host)
         }
         if carrBranch.hasPrefix(recetteBranchPrefix) {
             let branch = carrBranch.dropFirst(recetteBranchPrefix.count).lowercased()
@@ -290,7 +290,12 @@ struct HTMLGenerator {
         vfBranch: String?,
         carrBranch: String?
     ) -> String {
-        let launcherHost = videoFeedHost(vfBranch: vfBranch)
+        var launcherHost = videoFeedHost(vfBranch: vfBranch)
+        if vfBranch?.hasPrefix(recetteBranchPrefix) == true {
+            launcherHost += ".d33gpayci0qt6k.amplifyapp.com"
+        } else if vfBranch?.hasPrefix(localBranchPrefix) == true {
+            launcherHost += "/dist"
+        }
 
         return """
         <!doctype html>
@@ -305,7 +310,7 @@ struct HTMLGenerator {
                 window.MDTK_carrousel_fromsdk = true;
                 window.MDTK_videofeed_adunit_path = "\(adUnitPath ?? "")";
                 window.MDTK_videofeed_zone_index = "\(zoneId.map(String.init) ?? "")";
-                window.MDTK_VF_BRANCH = "\(vfBranch ?? "")";
+                window.MDTK_VF_BRANCH = "\(videoFeedHost(vfBranch: vfBranch))";
                 window.MDTK_CARR_BRANCH = "\(carrouselBranchValue(carrBranch: carrBranch))";
             </script>
             <style>
