@@ -30,6 +30,94 @@ struct ConfigVideoFeedView: View {
         )
     }
 
+    private enum VFBranchMode: String, CaseIterable, Identifiable {
+        case local = "Local"
+        case recette = "Recette"
+        case production = "Production"
+        var id: String { rawValue }
+    }
+
+    private var vfBranchMode: VFBranchMode {
+        if vfBranch.hasPrefix(HTMLGenerator.localBranchPrefix) { return .local }
+        if vfBranch.hasPrefix(HTMLGenerator.recetteBranchPrefix) { return .recette }
+        return vfBranch.isEmpty ? .production : .recette
+    }
+
+    private var vfBranchModeBinding: Binding<VFBranchMode> {
+        Binding(
+            get: { vfBranchMode },
+            set: { newMode in
+                switch newMode {
+                case .local: vfBranch = HTMLGenerator.localBranchPrefix
+                case .recette: vfBranch = HTMLGenerator.recetteBranchPrefix
+                case .production: vfBranch = ""
+                }
+            }
+        )
+    }
+
+    private var localHostText: Binding<String> {
+        Binding(
+            get: { String(vfBranch.dropFirst(HTMLGenerator.localBranchPrefix.count)) },
+            set: { vfBranch = HTMLGenerator.localBranchPrefix + $0 }
+        )
+    }
+
+    private var recetteBranchText: Binding<String> {
+        Binding(
+            get: {
+                vfBranch.hasPrefix(HTMLGenerator.recetteBranchPrefix)
+                    ? String(vfBranch.dropFirst(HTMLGenerator.recetteBranchPrefix.count))
+                    : vfBranch
+            },
+            set: { vfBranch = HTMLGenerator.recetteBranchPrefix + $0 }
+        )
+    }
+
+    private enum CarrBranchMode: String, CaseIterable, Identifiable {
+        case local = "Local"
+        case recette = "Recette"
+        case production = "Production"
+        var id: String { rawValue }
+    }
+
+    private var carrBranchMode: CarrBranchMode {
+        if carrBranch.hasPrefix(HTMLGenerator.localBranchPrefix) { return .local }
+        if carrBranch.hasPrefix(HTMLGenerator.recetteBranchPrefix) { return .recette }
+        return .production
+    }
+
+    private var carrBranchModeBinding: Binding<CarrBranchMode> {
+        Binding(
+            get: { carrBranchMode },
+            set: { newMode in
+                switch newMode {
+                case .local: carrBranch = HTMLGenerator.localBranchPrefix
+                case .recette: carrBranch = HTMLGenerator.recetteBranchPrefix
+                case .production: carrBranch = ""
+                }
+            }
+        )
+    }
+
+    private var carrLocalHostText: Binding<String> {
+        Binding(
+            get: { String(carrBranch.dropFirst(HTMLGenerator.localBranchPrefix.count)) },
+            set: { carrBranch = HTMLGenerator.localBranchPrefix + $0 }
+        )
+    }
+
+    private var carrRecetteBranchText: Binding<String> {
+        Binding(
+            get: {
+                carrBranch.hasPrefix(HTMLGenerator.recetteBranchPrefix)
+                    ? String(carrBranch.dropFirst(HTMLGenerator.recetteBranchPrefix.count))
+                    : carrBranch
+            },
+            set: { carrBranch = HTMLGenerator.recetteBranchPrefix + $0 }
+        )
+    }
+
     var body: some View {
         Form {
             Section {
@@ -84,26 +172,58 @@ struct ConfigVideoFeedView: View {
                 VStack(alignment: .leading, spacing: 4) {
                     Text("VF_BRANCH")
                         .font(.subheadline)
-                    TextField("ex: local, SUP-123...", text: $vfBranch)
-                        .font(.footnote.monospaced())
-                        .autocorrectionDisabled()
-                        .textInputAutocapitalization(.never)
-                        .keyboardType(.numbersAndPunctuation)
-                        .foregroundStyle(vfBranch.isEmpty ? .secondary : .primary)
+                    Picker("VF_BRANCH", selection: vfBranchModeBinding) {
+                        ForEach(VFBranchMode.allCases) { mode in
+                            Text(mode.rawValue).tag(mode)
+                        }
+                    }
+                    .pickerStyle(.segmented)
+
+                    switch vfBranchMode {
+                    case .local:
+                        TextField("ex: 192.168.1.136:5173", text: localHostText)
+                            .font(.footnote.monospaced())
+                            .autocorrectionDisabled()
+                            .textInputAutocapitalization(.never)
+                            .keyboardType(.numbersAndPunctuation)
+                    case .recette:
+                        TextField("Branche Amplify, ex: SUP-123", text: recetteBranchText)
+                            .font(.footnote.monospaced())
+                            .autocorrectionDisabled()
+                            .textInputAutocapitalization(.never)
+                    case .production:
+                        EmptyView()
+                    }
                 }
 
                 VStack(alignment: .leading, spacing: 4) {
                     Text("CARR_BRANCH")
                         .font(.subheadline)
-                    TextField("ex: local, SUP-123...", text: $carrBranch)
-                        .font(.footnote.monospaced())
-                        .autocorrectionDisabled()
-                        .textInputAutocapitalization(.never)
-                        .keyboardType(.numbersAndPunctuation)
-                        .foregroundStyle(carrBranch.isEmpty ? .secondary : .primary)
+                    Picker("CARR_BRANCH", selection: carrBranchModeBinding) {
+                        ForEach(CarrBranchMode.allCases) { mode in
+                            Text(mode.rawValue).tag(mode)
+                        }
+                    }
+                    .pickerStyle(.segmented)
+
+                    switch carrBranchMode {
+                    case .local:
+                        TextField("ex: 192.168.1.136:5174", text: carrLocalHostText)
+                            .font(.footnote.monospaced())
+                            .autocorrectionDisabled()
+                            .textInputAutocapitalization(.never)
+                            .keyboardType(.numbersAndPunctuation)
+                    case .recette:
+                        TextField("Branche Amplify, ex: SUP-123", text: carrRecetteBranchText)
+                            .font(.footnote.monospaced())
+                            .autocorrectionDisabled()
+                            .textInputAutocapitalization(.never)
+                    case .production:
+                        EmptyView()
+                    }
                 }
             } header: {
-                Text("Branches Amplify")
+                Text("Tests")
             }
         }
         .navigationTitle("Configuration VideoFeed")

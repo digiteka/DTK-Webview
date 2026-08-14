@@ -220,8 +220,34 @@ struct HTMLGenerator {
     // MARK: - HTML VideoFeed Carrousel
 
     /// Host servant launcher.min.js — bascule vers la preview Amplify de la branche VF_BRANCH si renseignée.
+    static let localBranchPrefix = "local:"
+    static let recetteBranchPrefix = "recette:"
+
     static func videoFeedHost(vfBranch: String?) -> String {
-        vfBranch.map { "\($0).d33gpayci0qt6k.amplifyapp.com" } ?? "videofeed.digiteka.com"
+        guard let vfBranch, !vfBranch.isEmpty else { return "videofeed.digiteka.com" }
+        if vfBranch.hasPrefix(localBranchPrefix) {
+            let host = vfBranch.dropFirst(localBranchPrefix.count)
+            return host.isEmpty ? "192.168.1.136:5173" : String(host)
+        }
+        if vfBranch.hasPrefix(recetteBranchPrefix) {
+            let branch = vfBranch.dropFirst(recetteBranchPrefix.count)
+            return "\(branch).d33gpayci0qt6k.amplifyapp.com"
+        }
+        return "videofeed.digiteka.com"
+    }
+
+    /// Valeur de window.MDTK_CARR_BRANCH — bascule vers la preview Amplify de CARR_BRANCH si renseignée.
+    static func carrouselBranchValue(carrBranch: String?) -> String {
+        guard let carrBranch, !carrBranch.isEmpty else { return "carrousel.digiteka.com" }
+        if carrBranch.hasPrefix(localBranchPrefix) {
+            let host = carrBranch.dropFirst(localBranchPrefix.count)
+            return host.isEmpty ? "local" : String(host)
+        }
+        if carrBranch.hasPrefix(recetteBranchPrefix) {
+            let branch = carrBranch.dropFirst(recetteBranchPrefix.count).lowercased()
+            return branch
+        }
+        return "carrousel.digiteka.com"
     }
 
     /// URL de la page VideoFeed plein écran — même format que la branche isMobileApp de
@@ -280,7 +306,7 @@ struct HTMLGenerator {
                 window.MDTK_videofeed_adunit_path = "\(adUnitPath ?? "")";
                 window.MDTK_videofeed_zone_index = "\(zoneId.map(String.init) ?? "")";
                 window.MDTK_VF_BRANCH = "\(vfBranch ?? "")";
-                window.MDTK_CARR_BRANCH = "\(carrBranch ?? "")";
+                window.MDTK_CARR_BRANCH = "\(carrouselBranchValue(carrBranch: carrBranch))";
             </script>
             <style>
                 body { background-color: transparent; margin: 0; }
