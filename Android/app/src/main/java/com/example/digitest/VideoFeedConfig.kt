@@ -12,14 +12,22 @@ private const val KEY_VIDEO_ID = "vf_video_id"
 private const val KEY_CARROUSEL_HEIGHT_VH = "vf_carrousel_height_vh"
 private const val KEY_VF_BRANCH = "vf_branch"
 private const val KEY_CARR_BRANCH = "carr_branch"
+private const val KEY_CONSENT_STRING_ENABLED = "vf_consent_string_enabled"
 private const val VF_AMPLIFY_APP_ID = "d33gpayci0qt6k"
 
 const val DEFAULT_VF_MDTK = "01573101"
 const val DEFAULT_VF_CARROUSEL_HEIGHT_VH = "95"
 
-/** Host servant le VideoFeed — bascule vers la preview Amplify de la branche VF_BRANCH si renseignée. */
-fun videoFeedHost(vfBranch: String?): String =
-    vfBranch?.let { "$it.$VF_AMPLIFY_APP_ID.amplifyapp.com" } ?: "videofeed.digiteka.com"
+/**
+ * Host servant le VideoFeed — bascule vers la preview Amplify de la branche VF_BRANCH si renseignée,
+ * ou vers un serveur dev LAN si VF_BRANCH est une IP (même convention que preprodUrl() côté
+ * verticalvideos/src/launcher/debug.ts:17-29).
+ */
+fun videoFeedHost(vfBranch: String?): String {
+    if (vfBranch.isNullOrEmpty()) return "videofeed.digiteka.com"
+    if (vfBranch.startsWith("192.168")) return vfBranch
+    return "$vfBranch.$VF_AMPLIFY_APP_ID.amplifyapp.com"
+}
 
 /**
  * URL de la page VideoFeed plein écran — même format que la branche isMobileApp de
@@ -52,7 +60,8 @@ data class VideoFeedConfig(
     val videoId: String?,
     val carrouselHeightVh: String?,
     val vfBranch: String?,
-    val carrBranch: String?
+    val carrBranch: String?,
+    val consentStringEnabled: Boolean
 )
 
 object VideoFeedPreferences {
@@ -66,7 +75,8 @@ object VideoFeedPreferences {
             videoId = prefs.getString(KEY_VIDEO_ID, null)?.ifEmpty { null },
             carrouselHeightVh = prefs.getString(KEY_CARROUSEL_HEIGHT_VH, null)?.ifEmpty { null },
             vfBranch = prefs.getString(KEY_VF_BRANCH, null)?.ifEmpty { null },
-            carrBranch = prefs.getString(KEY_CARR_BRANCH, null)?.ifEmpty { null }
+            carrBranch = prefs.getString(KEY_CARR_BRANCH, null)?.ifEmpty { null },
+            consentStringEnabled = prefs.getBoolean(KEY_CONSENT_STRING_ENABLED, false)
         )
     }
 
@@ -79,6 +89,7 @@ object VideoFeedPreferences {
             .putString(KEY_CARROUSEL_HEIGHT_VH, config.carrouselHeightVh)
             .putString(KEY_VF_BRANCH, config.vfBranch)
             .putString(KEY_CARR_BRANCH, config.carrBranch)
+            .putBoolean(KEY_CONSENT_STRING_ENABLED, config.consentStringEnabled)
             .apply()
     }
 
@@ -91,6 +102,7 @@ object VideoFeedPreferences {
             .remove(KEY_CARROUSEL_HEIGHT_VH)
             .remove(KEY_VF_BRANCH)
             .remove(KEY_CARR_BRANCH)
+            .remove(KEY_CONSENT_STRING_ENABLED)
             .apply()
     }
 }

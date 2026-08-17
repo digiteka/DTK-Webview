@@ -37,8 +37,12 @@
             }
         });
 
-        const branchValue = typeof window.MDTK_VF_BRANCH === 'string' ? window.MDTK_VF_BRANCH : null;
-        const videofeed_domain = branchValue ? `//${branchValue}.d33gpayci0qt6k.amplifyapp.com` : '//videofeed.digiteka.com';
+        const branchValue = typeof window.MDTK_VF_BRANCH === 'string' && window.MDTK_VF_BRANCH ? window.MDTK_VF_BRANCH : null;
+        const videofeed_domain = !branchValue
+            ? '//videofeed.digiteka.com'
+            : branchValue.startsWith('192.168')
+                ? `https://${branchValue}/dist`
+                : `//${branchValue}.d33gpayci0qt6k.amplifyapp.com`;
         const source = videofeed_domain + '/launcher.min.js';
 
         const scriptElement = document.createElement('script');

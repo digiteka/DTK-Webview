@@ -1,11 +1,12 @@
 package com.example.digitest.ui
 
-import android.webkit.CookieManager
 import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.background
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
@@ -15,10 +16,14 @@ import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
+import androidx.compose.material3.Checkbox
+import androidx.compose.material3.CheckboxDefaults
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.OutlinedButton
 import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.OutlinedTextFieldDefaults
+import androidx.compose.material3.RadioButton
+import androidx.compose.material3.RadioButtonDefaults
 import androidx.compose.material3.SnackbarHost
 import androidx.compose.material3.SnackbarHostState
 import androidx.compose.material3.Text
@@ -56,8 +61,11 @@ fun VideoFeedConfigScreen() {
     var adUnitPathInput by rememberSaveable { mutableStateOf(initialConfig.adUnitPath ?: "") }
     var videoIdInput by rememberSaveable { mutableStateOf(initialConfig.videoId ?: "") }
     var carrouselHeightInput by rememberSaveable { mutableStateOf(initialConfig.carrouselHeightVh ?: "") }
+    var vfBranchMode by rememberSaveable { mutableStateOf(branchMode(initialConfig.vfBranch)) }
     var vfBranchInput by rememberSaveable { mutableStateOf(initialConfig.vfBranch ?: "") }
+    var carrBranchMode by rememberSaveable { mutableStateOf(branchMode(initialConfig.carrBranch)) }
     var carrBranchInput by rememberSaveable { mutableStateOf(initialConfig.carrBranch ?: "") }
+    var consentStringEnabledInput by rememberSaveable { mutableStateOf(initialConfig.consentStringEnabled) }
     var activeConfig by remember { mutableStateOf(initialConfig) }
 
     Box(
@@ -75,9 +83,15 @@ fun VideoFeedConfigScreen() {
             Spacer(modifier = Modifier.height(24.dp))
 
             Text(
-                text = "Config VideoFeed",
+                text = "Configuration VideoFeed",
                 style = MaterialTheme.typography.headlineSmall.copy(fontWeight = FontWeight.Bold),
                 color = Color.White
+            )
+
+            Text(
+                text = "Configuration",
+                style = MaterialTheme.typography.labelLarge,
+                color = DigiBlue
             )
 
             OutlinedTextField(
@@ -132,24 +146,52 @@ fun VideoFeedConfigScreen() {
                 colors = configFieldColors()
             )
 
-            OutlinedTextField(
-                value = vfBranchInput,
-                onValueChange = { vfBranchInput = it },
-                label = { Text("VF_BRANCH") },
-                placeholder = { Text("Nom de la branche Amplify (SUP-132, EVO-456....) ou local") },
-                singleLine = true,
-                modifier = Modifier.fillMaxWidth(),
-                colors = configFieldColors()
+            Row(
+                verticalAlignment = Alignment.CenterVertically,
+                modifier = Modifier.fillMaxWidth()
+            ) {
+                Checkbox(
+                    checked = consentStringEnabledInput,
+                    onCheckedChange = { consentStringEnabledInput = it },
+                    colors = CheckboxDefaults.colors(checkedColor = DigiBlue)
+                )
+                Text(
+                    text = "Consent String",
+                    color = Color.White
+                )
+            }
+
+            Spacer(modifier = Modifier.height(30.dp))
+            
+            Text(
+                text = "Environnements de test",
+                style = MaterialTheme.typography.labelLarge,
+                color = DigiBlue,
+                modifier = Modifier.padding(top = 4.dp)
             )
 
-            OutlinedTextField(
-                value = carrBranchInput,
-                onValueChange = { carrBranchInput = it },
-                label = { Text("CARR_BRANCH") },
-                placeholder = { Text("Nom de la branche Amplify (SUP-132, EVO-456....) ou local") },
-                singleLine = true,
-                modifier = Modifier.fillMaxWidth(),
-                colors = configFieldColors()
+            Text(
+                text = "Pour des tests en local, installer le certificat utilisateur de l'ordinateur sur le téléphone utilisé.",
+                style = MaterialTheme.typography.bodySmall,
+                color = DigiTextSecondary
+            )
+
+            BranchModePicker(
+                label = "VF_BRANCH",
+                mode = vfBranchMode,
+                onModeChange = { vfBranchMode = it; vfBranchInput = "" },
+                input = vfBranchInput,
+                onInputChange = { vfBranchInput = it },
+                localPlaceholder = "ex: 192.168.1.136:5173"
+            )
+
+            BranchModePicker(
+                label = "CARR_BRANCH",
+                mode = carrBranchMode,
+                onModeChange = { carrBranchMode = it; carrBranchInput = "" },
+                input = carrBranchInput,
+                onInputChange = { carrBranchInput = it },
+                localPlaceholder = "ex: 192.168.1.136:5174"
             )
 
             Button(
@@ -160,13 +202,11 @@ fun VideoFeedConfigScreen() {
                         adUnitPath = adUnitPathInput.trim().ifEmpty { null },
                         videoId = videoIdInput.trim().ifEmpty { null },
                         carrouselHeightVh = carrouselHeightInput.trim().ifEmpty { null },
-                        vfBranch = vfBranchInput.trim().ifEmpty { null },
-                        carrBranch = carrBranchInput.trim().ifEmpty { null }
+                        vfBranch = if (vfBranchMode == BranchMode.PRODUCTION) null else vfBranchInput.trim().ifEmpty { null },
+                        carrBranch = if (carrBranchMode == BranchMode.PRODUCTION) null else carrBranchInput.trim().ifEmpty { null },
+                        consentStringEnabled = consentStringEnabledInput
                     )
                     VideoFeedPreferences.saveConfig(context, config)
-                    if (config.carrBranch.equals("local", ignoreCase = true)) {
-                        setLocalIpCarrCookie()
-                    }
                     activeConfig = VideoFeedPreferences.getConfig(context)
                     scope.launch { snackbarHostState.showSnackbar("Configuration sauvegardée") }
                 },
@@ -175,41 +215,6 @@ fun VideoFeedConfigScreen() {
             ) {
                 Text("Sauvegarder")
             }
-
-            OutlinedButton(
-                onClick = {
-                    VideoFeedPreferences.resetConfig(context)
-                    mdtkInput = ""
-                    zoneIdInput = ""
-                    adUnitPathInput = ""
-                    videoIdInput = ""
-                    carrouselHeightInput = ""
-                    vfBranchInput = ""
-                    carrBranchInput = ""
-                    activeConfig = VideoFeedPreferences.getConfig(context)
-                    scope.launch { snackbarHostState.showSnackbar("Configuration réinitialisée") }
-                },
-                modifier = Modifier.fillMaxWidth(),
-                border = BorderStroke(1.dp, DigiCardBorder),
-                colors = ButtonDefaults.outlinedButtonColors(contentColor = DigiTextSecondary)
-            ) {
-                Text("Réinitialiser")
-            }
-
-            Text(
-                text = "Configuration active :",
-                style = MaterialTheme.typography.labelLarge,
-                color = DigiBlue,
-                modifier = Modifier.padding(top = 4.dp)
-            )
-
-            ConfigLine("MDTK", activeConfig.mdtk ?: "$DEFAULT_VF_MDTK (défaut)")
-            ConfigLine("Zone ID", activeConfig.zoneId ?: "—")
-            ConfigLine("Ad Unit Path", activeConfig.adUnitPath ?: "—")
-            ConfigLine("Video ID", activeConfig.videoId ?: "—")
-            ConfigLine("Hauteur carrousel (vh)", activeConfig.carrouselHeightVh ?: "$DEFAULT_VF_CARROUSEL_HEIGHT_VH (défaut)")
-            ConfigLine("VF_BRANCH", activeConfig.vfBranch ?: "—")
-            ConfigLine("CARR_BRANCH", activeConfig.carrBranch ?: "—")
 
             Spacer(modifier = Modifier.height(24.dp))
         }
@@ -221,17 +226,75 @@ fun VideoFeedConfigScreen() {
     }
 }
 
-// Le launcher VideoFeed lit ce cookie sur .digiteka.com (document.cookie) quand
-// CARR_BRANCH vaut "local", pour pointer vers le serveur dev via IP LAN plutôt
-// que localhost (inaccessible depuis un device/émulateur).
-private fun setLocalIpCarrCookie() {
-    val cm = CookieManager.getInstance()
-    cm.setAcceptCookie(true)
-    cm.setCookie(
-        "https://digiteka.com",
-        "localIP_CARR=192.168.1.136; Domain=.digiteka.com; Path=/; SameSite=None; Secure"
-    )
-    cm.flush()
+private enum class BranchMode(val label: String) {
+    LOCAL("Local"),
+    RECETTE("Recette"),
+    PRODUCTION("Production")
+}
+
+/** Même heuristique que previewVideofeedHost()/preprodUrl() (verticalvideos/src/launcher/debug.ts:23) : une valeur IP LAN vaut Local, sinon Recette si renseignée, sinon Production. */
+private fun branchMode(value: String?): BranchMode = when {
+    value.isNullOrBlank() -> BranchMode.PRODUCTION
+    value.startsWith("192.168") -> BranchMode.LOCAL
+    else -> BranchMode.RECETTE
+}
+
+@Composable
+private fun BranchModePicker(
+    label: String,
+    mode: BranchMode,
+    onModeChange: (BranchMode) -> Unit,
+    input: String,
+    onInputChange: (String) -> Unit,
+    localPlaceholder: String
+) {
+    Column(
+        modifier = Modifier.fillMaxWidth(),
+        verticalArrangement = Arrangement.spacedBy(4.dp)
+    ) {
+        Text(
+            text = label,
+            style = MaterialTheme.typography.labelSmall,
+            color = DigiTextSecondary
+        )
+
+        Row(modifier = Modifier.fillMaxWidth()) {
+            BranchMode.entries.forEach { entry ->
+                Row(
+                    verticalAlignment = Alignment.CenterVertically,
+                    modifier = Modifier
+                        .weight(1f)
+                        .clickable { onModeChange(entry) }
+                ) {
+                    RadioButton(
+                        selected = mode == entry,
+                        onClick = { onModeChange(entry) },
+                        colors = RadioButtonDefaults.colors(selectedColor = DigiBlue)
+                    )
+                    Text(
+                        text = entry.label,
+                        style = MaterialTheme.typography.bodySmall,
+                        color = Color.White
+                    )
+                }
+            }
+        }
+
+        if (mode != BranchMode.PRODUCTION) {
+            OutlinedTextField(
+                value = input,
+                onValueChange = onInputChange,
+                placeholder = {
+                    Text(
+                        if (mode == BranchMode.LOCAL) localPlaceholder else "Branche Amplify, ex: SUP-132"
+                    )
+                },
+                singleLine = true,
+                modifier = Modifier.fillMaxWidth(),
+                colors = configFieldColors()
+            )
+        }
+    }
 }
 
 @Composable

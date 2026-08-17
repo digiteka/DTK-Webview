@@ -85,12 +85,7 @@ fun CarrouselScreen(navController: NavController) {
             )
             it.loadDataWithBaseURL("https://videofeed.digiteka.com", html, "text/html", "UTF-8", "")
 
-            // Le SDK (VideoFeedCarousel$WebViewClient) détecte l'ouverture du VideoFeed en
-            // comparant en dur l'host de la requête interceptée à "videofeed.digiteka.com"
-            // (aucune allowlist configurable dans l'AAR compilé). Pour tester avec un domaine
-            // de preview Amplify (ex: vfBranch = "evo-459.d5obtkx4de1s5.amplifyapp.com"), on
-            // duplique l'interception ici en délégant tout le reste au client SDK original —
-            // sinon on casse silencieusement le clic vignette normal (cf enableThirdPartyCookiesRecursively).
+
             previewVideofeedHost(config.vfBranch)?.let { previewHost ->
                 val sdkWebViewClient = it.webViewClient
                 it.webViewClient = object : WebViewClient() {

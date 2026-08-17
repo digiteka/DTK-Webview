@@ -9,9 +9,9 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.DisposableEffect
 import androidx.compose.runtime.remember
 import androidx.compose.ui.platform.LocalContext
+import com.example.digitest.DEFAULT_CONSENT_STRING
 import com.example.digitest.DEFAULT_VF_MDTK
 import com.example.digitest.VideoFeedPreferences
-import com.example.digitest.consent.ConsentManager
 import com.example.digitest.videoFeedFullscreenUrl
 
 // Contourne VideoFeedActivity (SDK fermé) — hardcode videofeed.digiteka.com et n'expose aucun
@@ -46,7 +46,11 @@ fun VideoFeedFullscreenScreen() {
                     videoId = config.videoId,
                     zoneId = config.zoneId,
                     vfBranch = config.vfBranch,
-                    consentString = ConsentManager.getTcString(context)
+                    consentString = if (config.consentStringEnabled) {
+                        DEFAULT_CONSENT_STRING
+                    } else {
+                        ""
+                    }
                 )
             )
         }
